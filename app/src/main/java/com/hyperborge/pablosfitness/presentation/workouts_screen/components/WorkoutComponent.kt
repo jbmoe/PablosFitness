@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hyperborge.pablosfitness.common.TestData
-import com.hyperborge.pablosfitness.domain.extensions.mapToPresentationModel
+import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
 import kotlin.time.DurationUnit

@@ -26,7 +26,9 @@ import androidx.navigation.NavController
 import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.common.TestData
 import com.hyperborge.pablosfitness.data.local.model.ExerciseCategory
-import com.hyperborge.pablosfitness.domain.extensions.mapToPresentationModel
+import com.hyperborge.pablosfitness.domain.extensions.ExerciseExtensions.mapToPresentationModel
+import com.hyperborge.pablosfitness.domain.extensions.StringExtensions.utf8Encode
+import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.exercises_screen.components.ExerciseCategoryItem
 import com.hyperborge.pablosfitness.presentation.exercises_screen.components.ExerciseItem
 import com.hyperborge.pablosfitness.presentation.presentation_models.ExercisePresentationModel
@@ -72,12 +74,15 @@ fun ExercisesScreen(
         exercises = state.exercises,
         snackbarHostState = snackbarHostState,
         onExerciseClicked = { exercise ->
+            val dateAsString = DateTimeHelper
+                .getStringFromOffsetDateTime(value = state.workoutDate)
+                .utf8Encode()
             navController.navigate(
                 route = NavRouteBuilder.buildRoute(
                     Screen.WorkoutScreen.route,
                     listOf(
                         NavConstants.PARAM_EXERCISE_ID to "${exercise.id}",
-                        NavConstants.PARAM_DATE to state.workoutDate
+                        NavConstants.PARAM_DATE to dateAsString
                     )
                 )
             )

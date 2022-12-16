@@ -53,8 +53,8 @@ fun NavGraph() {
             ),
             arguments = listOf(
                 navArgument(NavConstants.PARAM_DATE) {
-                    type = NavType.LongType
-                    defaultValue = -1.0
+                    type = NavType.StringType
+                    nullable = true
                 }
             )
         ) {
@@ -67,7 +67,8 @@ fun NavGraph() {
             ),
             arguments = listOf(
                 navArgument(NavConstants.PARAM_DATE) {
-                    type = NavType.LongType
+                    type = NavType.StringType
+                    nullable = true
                 }
             )
         ) {
@@ -106,8 +107,8 @@ fun NavGraph() {
                     defaultValue = -1
                 },
                 navArgument(NavConstants.PARAM_DATE) {
-                    type = NavType.LongType
-                    defaultValue = -1
+                    type = NavType.StringType
+                    nullable = true
                 }
             )
         ) {

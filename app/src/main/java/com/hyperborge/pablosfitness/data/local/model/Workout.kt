@@ -3,6 +3,7 @@ package com.hyperborge.pablosfitness.data.local.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.OffsetDateTime
 
 @Entity
 data class Workout(
@@ -15,7 +16,7 @@ data class Workout(
     @ColumnInfo(name = "distance") val distance: Double? = null,
     @ColumnInfo(name = "distance_unit") val distanceUnit: DistanceUnit = DistanceUnit.KM,
     @ColumnInfo(name = "time_in_seconds") val timeInSeconds: Int? = null,
-    @ColumnInfo(name = "created_at") val createdAt: Long,
-    @ColumnInfo(name = "updated_at") val updatedAt: Long
+    @ColumnInfo(name = "created_at") val createdAt: OffsetDateTime,
+    @ColumnInfo(name = "updated_at") val updatedAt: OffsetDateTime
 )
 

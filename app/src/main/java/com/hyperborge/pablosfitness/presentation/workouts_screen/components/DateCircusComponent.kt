@@ -18,13 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun DateCircusComponent(
     modifier: Modifier = Modifier,
-    date: LocalDateTime,
+    date: OffsetDateTime,
     onResetToToday: () -> Unit,
     onPrevDateClicked: () -> Unit,
     onNextDayClicked: () -> Unit
@@ -71,7 +71,7 @@ private fun Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             DateCircusComponent(
                 modifier = Modifier.fillMaxWidth(),
-                date = LocalDateTime.now(),
+                date = OffsetDateTime.now(),
                 onResetToToday = {},
                 onPrevDateClicked = {},
                 onNextDayClicked = {}

@@ -3,9 +3,8 @@ package com.hyperborge.pablosfitness.presentation.workout_screen
 import com.hyperborge.pablosfitness.data.local.model.DistanceUnit
 import com.hyperborge.pablosfitness.data.local.model.Exercise
 import com.hyperborge.pablosfitness.data.local.model.WeightUnit
-import com.hyperborge.pablosfitness.domain.helpers.DateHelper
 import com.hyperborge.pablosfitness.presentation.util.InputFieldState
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import kotlin.time.Duration
 
 data class WorkoutState(
@@ -14,7 +13,7 @@ data class WorkoutState(
     val errorText: String? = "",
     val workoutId: Int? = null,
     val exercise: Exercise,
-    val date: Long = DateHelper.getEpochSecondsFromLocalDateTime(LocalDateTime.now()),
+    val date: OffsetDateTime = OffsetDateTime.now(),
     val weight: InputFieldState<Double> = InputFieldState(0.0, label = "Weight"),
     val weightUnit: InputFieldState<String> = InputFieldState(
         value = WeightUnit.KG.toString(),

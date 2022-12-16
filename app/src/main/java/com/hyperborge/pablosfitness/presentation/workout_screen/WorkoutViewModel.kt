@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyperborge.pablosfitness.data.local.model.*
 import com.hyperborge.pablosfitness.data.repository.DbRepository
-import com.hyperborge.pablosfitness.domain.helpers.DateHelper
+import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.util.NavConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -53,10 +53,10 @@ class WorkoutViewModel @Inject constructor(
         savedStateHandle.get<Int>(NavConstants.PARAM_EXERCISE_ID)?.let { id ->
             exerciseId = id
         }
-        savedStateHandle.get<Long>(NavConstants.PARAM_DATE)?.let { date ->
-            if (date > 0) {
-                _state.value = _state.value.copy(date = date)
-            }
+        savedStateHandle.get<String>(NavConstants.PARAM_DATE)?.let { date ->
+            _state.value = _state.value.copy(
+                date = DateTimeHelper.getOffsetDateTimeFromString(date)
+            )
         }
 
         if (workoutId != -1) {
@@ -146,7 +146,7 @@ class WorkoutViewModel @Inject constructor(
                             weightUnit = _weightUnit,
                             reps = reps,
                             createdAt = _state.value.date,
-                            updatedAt = DateHelper.getEpochSecondsFromLocalDateTime(LocalDateTime.now()),
+                            updatedAt = OffsetDateTime.now(),
                         )
                     )
                     viewModelScope.launch {
@@ -182,7 +182,7 @@ class WorkoutViewModel @Inject constructor(
                             distanceUnit = _distanceUnit,
                             timeInSeconds = duration.inWholeSeconds.toInt(),
                             createdAt = _state.value.date,
-                            updatedAt = DateHelper.getEpochSecondsFromLocalDateTime(LocalDateTime.now()),
+                            updatedAt = OffsetDateTime.now(),
                         )
                     )
                     viewModelScope.launch {

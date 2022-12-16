@@ -8,8 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyperborge.pablosfitness.data.local.model.WorkoutWithExercise
 import com.hyperborge.pablosfitness.data.repository.DbRepository
-import com.hyperborge.pablosfitness.domain.extensions.mapToPresentationModel
-import com.hyperborge.pablosfitness.domain.helpers.DateHelper
+import com.hyperborge.pablosfitness.domain.extensions.OffsetDateTimeExtensions.atEndOfDate
+import com.hyperborge.pablosfitness.domain.extensions.OffsetDateTimeExtensions.getStartOfDay
+import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
+import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.util.NavConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +20,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import javax.inject.Inject
 
 
@@ -28,7 +30,7 @@ class WorkoutsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private var _state: MutableState<WorkoutsState> =
-        mutableStateOf(WorkoutsState(date = LocalDateTime.now()))
+        mutableStateOf(WorkoutsState(date = OffsetDateTime.now()))
     val state: State<WorkoutsState> = _state
 
     private var _recentlyDeletedWorkouts: List<WorkoutWithExercise> = emptyList()
@@ -37,12 +39,10 @@ class WorkoutsViewModel @Inject constructor(
     val uiEvents = _uiEventChannel.receiveAsFlow()
 
     init {
-        savedStateHandle.get<Long>(NavConstants.PARAM_DATE)?.let { date ->
-            if (date > 0) {
-                _state.value = _state.value.copy(
-                    date = DateHelper.getLocalDateFromEpochSeconds(date).atTime(12, 0)
-                )
-            }
+        savedStateHandle.get<String>(NavConstants.PARAM_DATE)?.let { date ->
+            _state.value = _state.value.copy(
+                date = DateTimeHelper.getOffsetDateTimeFromString(date).withHour(12)
+            )
         }
         getWorkoutsForDate(_state.value.date)
     }
@@ -111,11 +111,11 @@ class WorkoutsViewModel @Inject constructor(
         getWorkoutsForDate(decrementDate())
     }
 
-    private fun getWorkoutsForDate(date: LocalDateTime) {
+    private fun getWorkoutsForDate(date: OffsetDateTime) {
         viewModelScope.launch {
             dbRepository.getWorkouts(
-                from = DateHelper.getStartOfDateInEpochSeconds(date),
-                to = DateHelper.getEndOfDateInEpochSeconds(date)
+                from = date.getStartOfDay(),
+                to = date.atEndOfDate()
             ).onEach { workouts ->
                 _state.value = _state.value.copy(
                     workouts = workouts.mapToPresentationModel()
@@ -124,7 +124,7 @@ class WorkoutsViewModel @Inject constructor(
         }
     }
 
-    private fun incrementDate(): LocalDateTime {
+    private fun incrementDate(): OffsetDateTime {
         _state.value = _state.value.copy(
             date = _state.value.date.plusDays(1)
         )
@@ -132,7 +132,7 @@ class WorkoutsViewModel @Inject constructor(
         return _state.value.date
     }
 
-    private fun decrementDate(): LocalDateTime {
+    private fun decrementDate(): OffsetDateTime {
         _state.value = _state.value.copy(
             date = _state.value.date.minusDays(1)
         )
@@ -140,8 +140,8 @@ class WorkoutsViewModel @Inject constructor(
         return _state.value.date
     }
 
-    private fun resetDate(): LocalDateTime {
-        _state.value = _state.value.copy(date = LocalDateTime.now())
+    private fun resetDate(): OffsetDateTime {
+        _state.value = _state.value.copy(date = OffsetDateTime.now())
         return _state.value.date
     }
 

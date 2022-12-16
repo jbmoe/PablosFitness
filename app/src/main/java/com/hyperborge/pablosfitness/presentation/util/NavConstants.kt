@@ -1,6 +1,6 @@
 package com.hyperborge.pablosfitness.presentation.util
 
-import com.hyperborge.pablosfitness.domain.extensions.joinToStringOrNull
+import com.hyperborge.pablosfitness.domain.extensions.ListExtensions.joinToStringOrNull
 
 object NavConstants {
     const val PARAM_WORKOUT_ID = "workoutId"

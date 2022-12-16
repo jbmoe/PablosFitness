@@ -7,6 +7,7 @@ import com.hyperborge.pablosfitness.data.local.model.WorkoutWithExercise
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import java.time.OffsetDateTime
 import javax.inject.Inject
 
 class DbRepositoryImpl @Inject constructor(
@@ -14,8 +15,8 @@ class DbRepositoryImpl @Inject constructor(
     private val exerciseDao: ExerciseDao
 ) : DbRepository {
     override suspend fun getWorkouts(
-        from: Long,
-        to: Long
+        from: OffsetDateTime,
+        to: OffsetDateTime
     ): Flow<List<WorkoutWithExercise>> {
         return workoutDao.getWorkoutsInDateRange(from, to).filterNotNull()
     }
@@ -62,6 +63,7 @@ class DbRepositoryImpl @Inject constructor(
 
     override suspend fun deleteExerciseById(id: Int): Exercise {
         val exercise = exerciseDao.getExercise(id).first()
+        workoutDao.deleteWorkoutsWithExercise(exerciseId = id)
         exerciseDao.deleteExercise(exercise)
         return exercise
     }

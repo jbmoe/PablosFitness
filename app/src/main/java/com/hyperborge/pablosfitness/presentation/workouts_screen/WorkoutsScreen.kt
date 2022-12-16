@@ -25,8 +25,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.common.TestData
-import com.hyperborge.pablosfitness.domain.extensions.mapToPresentationModel
-import com.hyperborge.pablosfitness.domain.helpers.DateHelper
+import com.hyperborge.pablosfitness.domain.extensions.StringExtensions.utf8Encode
+import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
+import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
 import com.hyperborge.pablosfitness.presentation.util.NavConstants
@@ -35,7 +36,7 @@ import com.hyperborge.pablosfitness.presentation.util.Screen
 import com.hyperborge.pablosfitness.presentation.workouts_screen.components.DateCircusComponent
 import com.hyperborge.pablosfitness.presentation.workouts_screen.components.WorkoutComponent
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import kotlin.random.Random
 
 @Composable
@@ -74,14 +75,13 @@ fun WorkoutsScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onAddWorkout = {
+            val dateAsString = DateTimeHelper
+                .getStringFromOffsetDateTime(state.date)
+                .utf8Encode()
             navController.navigate(
                 route = NavRouteBuilder.buildRoute(
-                    Screen.ExercisesScreen.route,
-                    listOf(
-                        NavConstants.PARAM_DATE to "${
-                            DateHelper.getEpochSecondsFromLocalDateTime(state.date)
-                        }"
-                    )
+                    route = Screen.ExercisesScreen.route,
+                    queryParams = listOf(NavConstants.PARAM_DATE to dateAsString)
                 )
             )
         },
@@ -200,7 +200,7 @@ private fun BottomBarComponent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarComponent(
-    date: LocalDateTime,
+    date: OffsetDateTime,
     onAddWorkout: () -> Unit,
     onEvent: (WorkoutsEvent) -> Unit
 ) {
@@ -265,10 +265,11 @@ fun EmptyLogContent(onAddWorkout: () -> Unit) {
 @Preview(name = "Light mode", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
 @Composable
 private fun Preview() {
-    val data = TestData.workoutsWithExercises().mapToPresentationModel()
-        .map { it.copy(isMarked = Random.nextBoolean()) }
+    val data = TestData.workoutsWithExercises().mapToPresentationModel().map {
+        it.copy(isMarked = Random.nextBoolean())
+    }
     val state = WorkoutsState(
-        date = LocalDateTime.now(),
+        date = OffsetDateTime.now(),
         workouts = data,
     )
     PablosFitnessTheme {

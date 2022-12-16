@@ -1,12 +1,9 @@
 package com.hyperborge.pablosfitness.common
 
 import com.hyperborge.pablosfitness.data.local.model.*
-import com.hyperborge.pablosfitness.domain.helpers.DateHelper
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 object TestData {
-    private val yesterday = LocalDateTime.now().minusDays(1)
-    private val today = LocalDateTime.now()
     private val weightRepExercises = listOf(
         Exercise(
             id = 1,
@@ -108,8 +105,8 @@ object TestData {
             distance = 5.0,
             distanceUnit = DistanceUnit.KM,
             timeInSeconds = 900,
-            createdAt = DateHelper.getEpochSecondsFromLocalDateTime(today),
-            updatedAt = DateHelper.getEpochSecondsFromLocalDateTime(today)
+            createdAt = OffsetDateTime.now(),
+            updatedAt = OffsetDateTime.now()
         ),
         Workout(
             id = 2,
@@ -117,8 +114,8 @@ object TestData {
             distance = 5.0,
             distanceUnit = DistanceUnit.KM,
             timeInSeconds = 1800,
-            createdAt = DateHelper.getEpochSecondsFromLocalDateTime(today),
-            updatedAt = DateHelper.getEpochSecondsFromLocalDateTime(today)
+            createdAt = OffsetDateTime.now(),
+            updatedAt = OffsetDateTime.now()
         ),
         Workout(
             id = 3,
@@ -126,8 +123,8 @@ object TestData {
             weight = 35.0,
             weightUnit = WeightUnit.KG,
             reps = 30,
-            createdAt = DateHelper.getEpochSecondsFromLocalDateTime(today),
-            updatedAt = DateHelper.getEpochSecondsFromLocalDateTime(today)
+            createdAt = OffsetDateTime.now(),
+            updatedAt = OffsetDateTime.now()
         ),
         Workout(
             id = 4,
@@ -135,8 +132,8 @@ object TestData {
             weight = 45.0,
             weightUnit = WeightUnit.KG,
             reps = 36,
-            createdAt = DateHelper.getEpochSecondsFromLocalDateTime(today),
-            updatedAt = DateHelper.getEpochSecondsFromLocalDateTime(today)
+            createdAt = OffsetDateTime.now(),
+            updatedAt = OffsetDateTime.now()
         ),
         Workout(
             id = 5,
@@ -144,8 +141,8 @@ object TestData {
             weight = 30.0,
             weightUnit = WeightUnit.KG,
             reps = 40,
-            createdAt = DateHelper.getEpochSecondsFromLocalDateTime(yesterday),
-            updatedAt = DateHelper.getEpochSecondsFromLocalDateTime(today)
+            createdAt = OffsetDateTime.now(),
+            updatedAt = OffsetDateTime.now()
         ),
         Workout(
             id = 6,
@@ -153,8 +150,8 @@ object TestData {
             weight = 55.0,
             weightUnit = WeightUnit.KG,
             reps = 16,
-            createdAt = DateHelper.getEpochSecondsFromLocalDateTime(yesterday),
-            updatedAt = DateHelper.getEpochSecondsFromLocalDateTime(today)
+            createdAt = OffsetDateTime.now(),
+            updatedAt = OffsetDateTime.now()
         )
     )
 

@@ -18,6 +18,8 @@ import androidx.navigation.NavController
 import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.common.TestData
 import com.hyperborge.pablosfitness.data.local.model.ExerciseType
+import com.hyperborge.pablosfitness.domain.extensions.StringExtensions.utf8Encode
+import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.components.*
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
 import com.hyperborge.pablosfitness.presentation.util.NavConstants
@@ -33,16 +35,19 @@ fun WorkoutScreen(
         viewModel.uiEvents.collect { event ->
             when (event) {
                 WorkoutUiEvent.WorkoutSaved -> {
+                    val dateAsString = DateTimeHelper.getStringFromOffsetDateTime(
+                        value = viewModel.state.value.date
+                    ).utf8Encode()
                     navController.navigate(
                         route = NavRouteBuilder.buildRoute(
                             route = Screen.WorkoutsScreen.route,
-                            queryParams = listOf(NavConstants.PARAM_DATE to viewModel.state.value.date)
+                            queryParams = listOf(NavConstants.PARAM_DATE to dateAsString)
                         )
                     ) {
                         popUpTo(
                             route = NavRouteBuilder.buildRoute(
                                 route = Screen.WorkoutsScreen.route,
-                                queryParams = listOf(NavConstants.PARAM_DATE to viewModel.state.value.date)
+                                queryParams = listOf(NavConstants.PARAM_DATE to dateAsString)
                             )
                         ) {
                             inclusive = true

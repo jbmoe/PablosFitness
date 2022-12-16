@@ -9,7 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.hyperborge.pablosfitness.data.local.model.Exercise
 import com.hyperborge.pablosfitness.data.local.model.ExerciseCategory
 import com.hyperborge.pablosfitness.data.repository.DbRepository
-import com.hyperborge.pablosfitness.domain.extensions.mapToPresentationModel
+import com.hyperborge.pablosfitness.domain.extensions.ExerciseExtensions.mapToPresentationModel
+import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.presentation_models.ExercisePresentationModel
 import com.hyperborge.pablosfitness.presentation.util.NavConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,8 +47,10 @@ class ExercisesViewModel @Inject constructor(
     val uiEvents = _uiEventChannel.receiveAsFlow()
 
     init {
-        savedStateHandle.get<Long>(NavConstants.PARAM_DATE).let { date ->
-            _state.value = _state.value.copy(workoutDate = date!!)
+        savedStateHandle.get<String>(NavConstants.PARAM_DATE)?.let { date ->
+            _state.value = _state.value.copy(
+                workoutDate = DateTimeHelper.getOffsetDateTimeFromString(date)
+            )
         }
         getAllExercises()
     }

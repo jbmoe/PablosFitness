@@ -4,6 +4,7 @@ import androidx.room.*
 import com.hyperborge.pablosfitness.data.local.model.Workout
 import com.hyperborge.pablosfitness.data.local.model.WorkoutWithExercise
 import kotlinx.coroutines.flow.Flow
+import java.time.OffsetDateTime
 
 @Dao
 interface WorkoutDao {
@@ -12,16 +13,22 @@ interface WorkoutDao {
     fun getWorkout(id: Int): Flow<WorkoutWithExercise>
 
     @Transaction
-    @Query("SELECT * FROM workout WHERE :from <= created_at AND created_at <= :to")
-    fun getWorkoutsInDateRange(from: Long, to: Long): Flow<List<WorkoutWithExercise>>
+    @Query("SELECT * FROM workout WHERE datetime(:from) <= datetime(created_at) AND datetime(created_at) <= datetime(:to)")
+    fun getWorkoutsInDateRange(
+        from: OffsetDateTime,
+        to: OffsetDateTime
+    ): Flow<List<WorkoutWithExercise>>
 
     @Transaction
     @Query("SELECT * FROM workout WHERE id IN(:ids)")
     fun getWorkoutsByIds(ids: List<Int>): Flow<List<WorkoutWithExercise>>
 
     @Transaction
-    @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId ORDER BY created_at DESC LIMIT 1")
+    @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId ORDER BY datetime(created_at) DESC LIMIT 1")
     fun getNewestWorkoutWithExercise(exerciseId: Int): WorkoutWithExercise?
+
+    @Query("DELETE FROM workout WHERE exercise_id = :exerciseId")
+    fun deleteWorkoutsWithExercise(exerciseId: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertWorkout(workout: Workout)
