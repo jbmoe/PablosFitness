@@ -14,13 +14,13 @@ data class WorkoutState(
     val workoutId: Int? = null,
     val exercise: Exercise,
     val date: OffsetDateTime = OffsetDateTime.now(),
-    val weight: InputFieldState<Double> = InputFieldState(0.0, label = "Weight"),
+    val weight: InputFieldState<String> = InputFieldState("0.0", label = "Weight"),
     val weightUnit: InputFieldState<String> = InputFieldState(
         value = WeightUnit.KG.toString(),
         label = "Unit"
     ),
-    val reps: InputFieldState<Int> = InputFieldState(0, label = "Reps"),
-    val distance: InputFieldState<Double> = InputFieldState(0.0, label = "Distance"),
+    val reps: InputFieldState<String> = InputFieldState("0", label = "Reps"),
+    val distance: InputFieldState<String> = InputFieldState("0.0", label = "Distance"),
     val distanceUnit: InputFieldState<String> = InputFieldState(
         value = DistanceUnit.M.toString(),
         label = "Unit"

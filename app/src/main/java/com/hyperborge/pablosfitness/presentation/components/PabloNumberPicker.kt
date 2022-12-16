@@ -28,39 +28,59 @@ import com.hyperborge.pablosfitness.presentation.util.InputFieldState
 @Composable
 fun PabloDoublePicker(
     modifier: Modifier = Modifier,
-    inputState: InputFieldState<Double> = InputFieldState(value = 0.0),
+    inputState: InputFieldState<String>,
     stepSize: Double = 1.0,
-    onValueChanged: (Double) -> Unit
+    onValueChanged: (String) -> Unit
 ) {
+    val valueAsNumber = inputState.value.toDoubleOrNull()
     PabloBaseNumberPicker(
         modifier = modifier,
         inputState = inputState,
-        onSubtract = { onValueChanged(inputState.value - stepSize) },
-        onAdd = { onValueChanged(inputState.value + stepSize) },
-        onValueChange = { onValueChanged(it.toDoubleOrNull() ?: 0.0) }
+        onSubtract = {
+            valueAsNumber?.let {
+                onValueChanged((valueAsNumber - stepSize).toString())
+            }
+        },
+        onAdd = {
+            valueAsNumber?.let {
+                onValueChanged((valueAsNumber + stepSize).toString())
+            }
+        },
+        onValueChange = {
+            onValueChanged(it)
+        }
     )
 }
 
 @Composable
 fun PabloIntPicker(
     modifier: Modifier = Modifier,
-    inputState: InputFieldState<Int> = InputFieldState(value = 0),
+    inputState: InputFieldState<String>,
     stepSize: Int = 1,
-    onValueChanged: (Int) -> Unit
+    onValueChanged: (String) -> Unit
 ) {
+    val valueAsNumber = inputState.value.toIntOrNull()
     PabloBaseNumberPicker(
         modifier = modifier,
         inputState = inputState,
-        onSubtract = { onValueChanged(inputState.value - stepSize) },
-        onAdd = { onValueChanged(inputState.value + stepSize) },
-        onValueChange = { onValueChanged(it.toIntOrNull() ?: 0) }
+        onSubtract = {
+            valueAsNumber?.let {
+                onValueChanged((valueAsNumber - stepSize).toString())
+            }
+        },
+        onAdd = {
+            valueAsNumber?.let {
+                onValueChanged((valueAsNumber + stepSize).toString())
+            }
+        },
+        onValueChange = { onValueChanged(it) }
     )
 }
 
 @Composable
-private fun <T : Number> PabloBaseNumberPicker(
+private fun PabloBaseNumberPicker(
     modifier: Modifier = Modifier,
-    inputState: InputFieldState<T>,
+    inputState: InputFieldState<String>,
     onSubtract: () -> Unit,
     onAdd: () -> Unit,
     onValueChange: (String) -> Unit
@@ -72,6 +92,7 @@ private fun <T : Number> PabloBaseNumberPicker(
         BetterTextField(
             modifier = modifier,
             inputState = inputState,
+            singleLine = true,
             leadingIcon = {
                 IconButton(onClick = onSubtract) {
                     Icon(
@@ -103,8 +124,8 @@ private fun Preview() {
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            PabloDoublePicker(onValueChanged = {})
-            PabloIntPicker(onValueChanged = {})
+            PabloDoublePicker(inputState = InputFieldState(value = "0.0"), onValueChanged = {})
+            PabloIntPicker(inputState = InputFieldState(value = "0"), onValueChanged = {})
         }
     }
 }

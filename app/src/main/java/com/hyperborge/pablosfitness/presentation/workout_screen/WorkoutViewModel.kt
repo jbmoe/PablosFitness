@@ -95,17 +95,19 @@ class WorkoutViewModel @Inject constructor(
 
     private fun clearValues() {
         _state.value = _state.value.copy(
-            weight = _state.value.weight.setValueAndClearError(0.0),
-            reps = _state.value.reps.setValueAndClearError(0),
-            distance = _state.value.distance.setValueAndClearError(0.0),
+            weight = _state.value.weight.setValueAndClearError("0.0"),
+            reps = _state.value.reps.setValueAndClearError("0"),
+            distance = _state.value.distance.setValueAndClearError("0.0"),
             duration = _state.value.duration.setValueAndClearError(Duration.ZERO),
         )
     }
 
-    private fun setDistance(distance: Double) {
-        if (distance < 0) return
+    private fun setDistance(distance: String) {
+        val value = distance.ifEmpty {
+            ""
+        }
         _state.value = _state.value.copy(
-            distance = _state.value.distance.setValueAndClearError(distance)
+            distance = _state.value.distance.setValueAndClearError(value)
         )
     }
 
@@ -116,15 +118,13 @@ class WorkoutViewModel @Inject constructor(
         )
     }
 
-    private fun setWeight(weight: Double) {
-        if (weight < 0) return
+    private fun setWeight(weight: String) {
         _state.value = _state.value.copy(
             weight = _state.value.weight.setValueAndClearError(weight)
         )
     }
 
-    private fun setReps(reps: Int) {
-        if (reps < 0) return
+    private fun setReps(reps: String) {
         _state.value = _state.value.copy(
             reps = _state.value.reps.setValueAndClearError(reps),
         )
@@ -133,8 +133,20 @@ class WorkoutViewModel @Inject constructor(
     private fun saveWorkout() {
         when (_state.value.exercise.type) {
             ExerciseType.WeightAndReps -> {
-                val weight = _state.value.weight.value
-                val reps = _state.value.reps.value
+                val weight = _state.value.weight.value.toDoubleOrNull()
+                val reps = _state.value.reps.value.toIntOrNull()
+
+                if (weight == null || reps == null) {
+                    if (weight == null)
+                        _state.value = _state.value.copy(
+                            weight = _state.value.weight.setError("Invalid weight")
+                        )
+                    if (reps == null)
+                        _state.value = _state.value.copy(
+                            reps = _state.value.reps.setError("Invalid reps")
+                        )
+                    return
+                }
 
                 if (weight > 0 && reps > 0) {
                     val workout = WorkoutWithExercise(
@@ -169,8 +181,15 @@ class WorkoutViewModel @Inject constructor(
                 }
             }
             ExerciseType.DistanceAndTime -> {
-                val distance = _state.value.distance.value
+                val distance = _state.value.distance.value.toDoubleOrNull()
                 val duration = _state.value.duration.value
+
+                if (distance == null) {
+                    _state.value = _state.value.copy(
+                        distance = _state.value.distance.setError("Invalid distance")
+                    )
+                    return
+                }
 
                 if (distance > 0 && duration > Duration.ZERO) {
                     val workout = WorkoutWithExercise(
@@ -213,16 +232,16 @@ class WorkoutViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     exercise = workout.exercise,
                     weight = _state.value.weight.setValueAndClearError(
-                        workout.workout.weight ?: 0.0
+                        workout.workout.weight.toString()
                     ),
                     weightUnit = _state.value.weightUnit.setValueAndClearError(
                         workout.workout.weightUnit.toString()
                     ),
                     reps = _state.value.reps.setValueAndClearError(
-                        workout.workout.reps ?: 0
+                        workout.workout.reps.toString()
                     ),
                     distance = _state.value.distance.setValueAndClearError(
-                        workout.workout.distance ?: 0.0
+                        workout.workout.distance.toString()
                     ),
                     distanceUnit = _state.value.distanceUnit.setValueAndClearError(
                         workout.workout.distanceUnit.toString()
@@ -246,16 +265,16 @@ class WorkoutViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     exercise = workout.exercise,
                     weight = _state.value.weight.setValueAndClearError(
-                        workout.workout.weight ?: 0.0
+                        workout.workout.weight.toString()
                     ),
                     weightUnit = _state.value.weightUnit.setValueAndClearError(
                         workout.workout.weightUnit.toString()
                     ),
                     reps = _state.value.reps.setValueAndClearError(
-                        workout.workout.reps ?: 0
+                        workout.workout.reps.toString()
                     ),
                     distance = _state.value.distance.setValueAndClearError(
-                        workout.workout.distance ?: 0.0
+                        workout.workout.distance.toString()
                     ),
                     distanceUnit = _state.value.distanceUnit.setValueAndClearError(
                         workout.workout.distanceUnit.toString()
