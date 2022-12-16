@@ -31,6 +31,6 @@ object AppModule {
     @Provides
     @Singleton
     fun providesDbRepository(db: PablosFitnessDatabase): DbRepository {
-        return DbRepositoryImpl(db.activityDao, db.sessionDao, db.exerciseDao)
+        return DbRepositoryImpl(db.workoutDao, db.exerciseDao)
     }
 }

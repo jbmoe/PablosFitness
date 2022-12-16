@@ -1,34 +1,46 @@
 package com.hyperborge.pablosfitness.presentation.ui.theme
 
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
-)
+@Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(name = "Light mode", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
+@Composable
+private fun Preview() {
+    PablosFitnessTheme {
+        val types = listOf(
+            MaterialTheme.typography.displayLarge to "displayLarge",
+            MaterialTheme.typography.displayMedium to "displayMedium",
+            MaterialTheme.typography.displaySmall to "displaySmall",
+            MaterialTheme.typography.headlineLarge to "headlineLarge",
+            MaterialTheme.typography.headlineMedium to "headlineMedium",
+            MaterialTheme.typography.headlineSmall to "headlineSmall",
+            MaterialTheme.typography.titleLarge to "titleLarge",
+            MaterialTheme.typography.titleMedium to "titleMedium",
+            MaterialTheme.typography.titleSmall to "titleSmall",
+            MaterialTheme.typography.bodyLarge to "bodyLarge",
+            MaterialTheme.typography.bodyMedium to "bodyMedium",
+            MaterialTheme.typography.bodySmall to "bodySmall",
+            MaterialTheme.typography.labelLarge to "labelLarge",
+            MaterialTheme.typography.labelMedium to "labelMedium",
+            MaterialTheme.typography.labelSmall to "labelSmall"
+        )
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(types) { (type, text) ->
+                Text(text = text, style = type)
+            }
+        }
+    }
+}

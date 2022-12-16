@@ -1,3 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pablo\'s Fitness</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="workouts">Workouts</string>
+    <string name="exercises">Exercises</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="empty_workout_log">Workout Log Empty</string>
+    <string name="start_new_workout">Start New Workout</string>
+    <string name="restore">Restore</string>
+    <string name="n_deleted">%1d deleted</string>
+    <string name="update_exercise">Update Exercise</string>
+    <string name="new_exercise">New Exercise</string>
+    <string name="n_marked">%1d selected</string>
+    <string name="x_deleted">%1s deleted</string>
 </resources>

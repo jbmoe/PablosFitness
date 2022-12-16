@@ -1,33 +1,24 @@
 package com.hyperborge.pablosfitness.data.repository
 
-import com.hyperborge.pablosfitness.data.local.model.Activity
-import com.hyperborge.pablosfitness.data.local.model.ExerciseAndActivity
-import com.hyperborge.pablosfitness.data.local.model.SessionWithExercisesAndActivities
+import com.hyperborge.pablosfitness.data.local.model.Exercise
+import com.hyperborge.pablosfitness.data.local.model.WorkoutWithExercise
+import kotlinx.coroutines.flow.Flow
 
-interface DbRepository {
-    suspend fun getSessions(): List<SessionWithExercisesAndActivities>
-
-    fun getSessionById(id: Int): SessionWithExercisesAndActivities
-
-    fun insertSession(session: SessionWithExercisesAndActivities)
-
-    fun deleteSession(session: SessionWithExercisesAndActivities)
-
-    fun getActivities(): List<Activity>
-
-    fun getActivityById(id: Int): Activity
-
-    fun insertActivity(activity: Activity)
-
-    fun insertActivities(activities: List<Activity>)
-
-    fun deleteActivity(activity: Activity)
-
-    fun getExercisesForSession(sessionId: Int): List<ExerciseAndActivity>
-
-    fun getExercise(id: Int): ExerciseAndActivity
-
-    fun insertExercise(exercise: ExerciseAndActivity)
-
-    fun deleteExercise(exercise: ExerciseAndActivity)
+interface ExerciseRepository {
+    suspend fun getExercise(id: Int): Flow<Exercise>
+    suspend fun getExercises(): Flow<List<Exercise>>
+    fun insertExercise(exercise: Exercise)
+    suspend fun deleteExerciseById(id: Int): Exercise
 }
+
+interface WorkoutRepository {
+    suspend fun getWorkout(id: Int): Flow<WorkoutWithExercise>
+    suspend fun getWorkouts(from: Long, to: Long): Flow<List<WorkoutWithExercise>>
+    suspend fun getNewestWorkoutWithExercise(exerciseId: Int): WorkoutWithExercise?
+    fun insertWorkout(workout: WorkoutWithExercise)
+    fun insertWorkouts(workouts: List<WorkoutWithExercise>)
+    suspend fun deleteWorkoutById(id: Int): WorkoutWithExercise
+    suspend fun deleteWorkoutsByIds(ids: List<Int>): List<WorkoutWithExercise>
+}
+
+interface DbRepository : ExerciseRepository, WorkoutRepository
