@@ -13,7 +13,7 @@ import com.hyperborge.pablosfitness.domain.extensions.OffsetDateTimeExtensions.g
 import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
 import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
-import com.hyperborge.pablosfitness.presentation.util.NavConstants
+import com.hyperborge.pablosfitness.presentation.util.navigation.NavConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn

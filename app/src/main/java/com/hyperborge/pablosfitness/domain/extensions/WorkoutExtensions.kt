@@ -16,7 +16,8 @@ object WorkoutExtensions {
             duration = this.workout.timeInSeconds?.toDuration(DurationUnit.SECONDS),
             weight = this.workout.weight,
             weightUnit = this.workout.weightUnit,
-            reps = this.workout.reps
+            reps = this.workout.reps,
+            createdAt = this.workout.createdAt
         )
     }
 

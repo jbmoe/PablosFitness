@@ -15,7 +15,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
 import com.hyperborge.pablosfitness.presentation.util.InputFieldState
-import com.hyperborge.pablosfitness.presentation.util.textOrNull
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -115,4 +114,12 @@ fun <T> BetterTextField(
         shape = shape,
         interactionSource = interactionSource
     )
+}
+
+private fun textOrNull(text: String?): @Composable (() -> Unit)? {
+    return if (text.isNullOrBlank()) {
+        null
+    } else {
+        { Text(text = text) }
+    }
 }

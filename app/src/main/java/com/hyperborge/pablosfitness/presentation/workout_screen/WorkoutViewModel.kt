@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyperborge.pablosfitness.data.local.model.*
 import com.hyperborge.pablosfitness.data.repository.DbRepository
+import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
 import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
-import com.hyperborge.pablosfitness.presentation.util.NavConstants
+import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
+import com.hyperborge.pablosfitness.presentation.util.navigation.NavConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -63,6 +65,7 @@ class WorkoutViewModel @Inject constructor(
             initWorkout(workoutId)
         } else if (exerciseId != -1) {
             initLatestWorkout(exerciseId)
+            initHistory(exerciseId)
         }
     }
 
@@ -76,7 +79,19 @@ class WorkoutViewModel @Inject constructor(
             is WorkoutEvent.WeightChanged -> setWeight(event.weight)
             is WorkoutEvent.DistanceUnitChanged -> setUnit(event.item)
             is WorkoutEvent.WeighUnitChanged -> setUnit(event.item)
+            is WorkoutEvent.CopyWorkout -> copyWorkout(event.workout)
         }
+    }
+
+    private fun copyWorkout(workout: WorkoutPresentationModel) {
+        _state.value = _state.value.copy(
+            weight = _state.value.weight.setValueAndClearError(workout.weight.toString()),
+            weightUnit = _state.value.weightUnit.setValueAndClearError(workout.weightUnit.toString()),
+            reps = _state.value.reps.setValueAndClearError(workout.reps.toString()),
+            distance = _state.value.distance.setValueAndClearError(workout.distance.toString()),
+            distanceUnit = _state.value.distance.setValueAndClearError(workout.distanceUnit.toString()),
+            duration = _state.value.duration.setValueAndClearError(workout.duration ?: Duration.ZERO),
+        )
     }
 
     private fun setUnit(item: DistanceUnit) {
@@ -103,11 +118,8 @@ class WorkoutViewModel @Inject constructor(
     }
 
     private fun setDistance(distance: String) {
-        val value = distance.ifEmpty {
-            ""
-        }
         _state.value = _state.value.copy(
-            distance = _state.value.distance.setValueAndClearError(value)
+            distance = _state.value.distance.setValueAndClearError(distance)
         )
     }
 
@@ -295,6 +307,14 @@ class WorkoutViewModel @Inject constructor(
         viewModelScope.launch {
             dbRepository.getExercise(id).onEach { exercise ->
                 _state.value = _state.value.copy(exercise = exercise)
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    private fun initHistory(exerciseId: Int) {
+        viewModelScope.launch {
+            dbRepository.getWorkoutsWithExercise(exerciseId).onEach { workouts ->
+                _state.value = _state.value.copy(history = workouts.mapToPresentationModel())
             }.launchIn(viewModelScope)
         }
     }

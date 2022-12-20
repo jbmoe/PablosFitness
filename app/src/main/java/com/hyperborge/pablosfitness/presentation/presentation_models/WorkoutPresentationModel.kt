@@ -3,6 +3,7 @@ package com.hyperborge.pablosfitness.presentation.presentation_models
 import com.hyperborge.pablosfitness.data.local.model.DistanceUnit
 import com.hyperborge.pablosfitness.data.local.model.ExerciseType
 import com.hyperborge.pablosfitness.data.local.model.WeightUnit
+import java.time.OffsetDateTime
 import kotlin.time.Duration
 
 data class WorkoutPresentationModel(
@@ -15,5 +16,6 @@ data class WorkoutPresentationModel(
     val weight: Double? = null,
     val weightUnit: WeightUnit? = null,
     val reps: Int? = null,
-    val isMarked: Boolean = false
+    val isMarked: Boolean = false,
+    val createdAt: OffsetDateTime
 )

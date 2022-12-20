@@ -27,6 +27,10 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId ORDER BY datetime(created_at) DESC LIMIT 1")
     fun getNewestWorkoutWithExercise(exerciseId: Int): WorkoutWithExercise?
 
+    @Transaction
+    @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId ORDER BY datetime(created_at) DESC")
+    fun getWorkoutsWithExercise(exerciseId: Int): Flow<List<WorkoutWithExercise>>
+
     @Query("DELETE FROM workout WHERE exercise_id = :exerciseId")
     fun deleteWorkoutsWithExercise(exerciseId: Int)
 

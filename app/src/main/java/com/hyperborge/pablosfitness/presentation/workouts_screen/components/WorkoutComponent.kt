@@ -11,10 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hyperborge.pablosfitness.common.TestData
+import com.hyperborge.pablosfitness.data.local.model.ExerciseType
 import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
-import kotlin.time.DurationUnit
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -82,14 +82,19 @@ private fun ExerciseDetails(modifier: Modifier = Modifier, exercise: WorkoutPres
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        if (exercise.distance != null &&
+        if (
+            exercise.distance != null &&
             exercise.distanceUnit != null &&
             exercise.duration != null
         ) {
             Text(text = "${exercise.distance} ${exercise.distanceUnit}")
-            Text(text = exercise.duration.toString(DurationUnit.MINUTES, 1))
-        } else if (exercise.weight != null && exercise.reps != null) {
-            Text(text = "${exercise.weight} ${exercise.weightUnit.toString()}")
+            Text(text = exercise.duration.toString())
+        } else if (
+            exercise.weight != null &&
+            exercise.weightUnit != null &&
+            exercise.reps != null
+        ) {
+            Text(text = "${exercise.weight} ${exercise.weightUnit}")
             Text(text = "${exercise.reps} reps")
         }
     }
@@ -100,14 +105,19 @@ private fun ExerciseDetails(modifier: Modifier = Modifier, exercise: WorkoutPres
 @Preview(name = "Light mode", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
 @Composable
 private fun Preview() {
-    val exercises = TestData
+    val exercise1 = TestData
         .workoutsWithExercises()
         .mapToPresentationModel()
         .random()
+    val exercise2 = TestData
+        .workoutsWithExercises(ExerciseType.DistanceAndTime)
+        .random()
+        .mapToPresentationModel()
 
     PablosFitnessTheme {
         Column(Modifier.background(MaterialTheme.colorScheme.background)) {
-            WorkoutComponent(modifier = Modifier.fillMaxWidth(), exercises, {}) {}
+            WorkoutComponent(modifier = Modifier.fillMaxWidth(), exercise1, {}) {}
+            WorkoutComponent(modifier = Modifier.fillMaxWidth(), exercise2, {}) {}
         }
     }
 }

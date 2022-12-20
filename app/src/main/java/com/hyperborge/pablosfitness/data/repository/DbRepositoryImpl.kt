@@ -25,6 +25,10 @@ class DbRepositoryImpl @Inject constructor(
         return workoutDao.getNewestWorkoutWithExercise(exerciseId)
     }
 
+    override suspend fun getWorkoutsWithExercise(exerciseId: Int): Flow<List<WorkoutWithExercise>> {
+        return workoutDao.getWorkoutsWithExercise(exerciseId)
+    }
+
     override suspend fun getWorkout(id: Int): Flow<WorkoutWithExercise> {
         return workoutDao.getWorkout(id).filterNotNull()
     }

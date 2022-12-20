@@ -27,15 +27,11 @@ import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.common.TestData
 import com.hyperborge.pablosfitness.data.local.model.ExerciseCategory
 import com.hyperborge.pablosfitness.domain.extensions.ExerciseExtensions.mapToPresentationModel
-import com.hyperborge.pablosfitness.domain.extensions.StringExtensions.utf8Encode
-import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.exercises_screen.components.ExerciseCategoryItem
 import com.hyperborge.pablosfitness.presentation.exercises_screen.components.ExerciseItem
 import com.hyperborge.pablosfitness.presentation.presentation_models.ExercisePresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
-import com.hyperborge.pablosfitness.presentation.util.NavConstants
-import com.hyperborge.pablosfitness.presentation.util.NavRouteBuilder
-import com.hyperborge.pablosfitness.presentation.util.Screen
+import com.hyperborge.pablosfitness.presentation.util.navigation.routes.NavRouteBuilder
 import kotlinx.coroutines.launch
 
 @Composable
@@ -69,36 +65,37 @@ fun ExercisesScreen(
             }
         }
     }
-
     Content(
         exercises = state.exercises,
         snackbarHostState = snackbarHostState,
         onExerciseClicked = { exercise ->
-            val dateAsString = DateTimeHelper
-                .getStringFromOffsetDateTime(value = state.workoutDate)
-                .utf8Encode()
             navController.navigate(
-                route = NavRouteBuilder.buildRoute(
-                    Screen.WorkoutScreen.route,
-                    listOf(
-                        NavConstants.PARAM_EXERCISE_ID to "${exercise.id}",
-                        NavConstants.PARAM_DATE to dateAsString
-                    )
-                )
+                route = NavRouteBuilder
+                    .workoutScreen(state.workoutDate)
+                    .withExerciseId(exercise.id)
+                    .build()
             )
         },
-        onAddEditExercise = { exercise ->
+        onAddExercise = {
             navController.navigate(
-                route = NavRouteBuilder.buildRoute(
-                    Screen.ExerciseScreen.route,
-                    listOf(NavConstants.PARAM_EXERCISE_ID to (exercise?.id ?: -1))
-                )
+                route = NavRouteBuilder
+                    .exerciseScreen()
+                    .build()
+            )
+        },
+        onEditExercise = { exercise ->
+            navController.navigate(
+                route = NavRouteBuilder
+                    .exerciseScreen()
+                    .withExerciseId(exercise.id)
+                    .build()
             )
         },
         onBack = { navController.popBackStack() }
     ) { event ->
         viewModel.onEvent(event)
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -107,7 +104,8 @@ private fun Content(
     exercises: Map<ExerciseCategory, List<ExercisePresentationModel>>,
     snackbarHostState: SnackbarHostState,
     onExerciseClicked: (ExercisePresentationModel) -> Unit,
-    onAddEditExercise: (ExercisePresentationModel?) -> Unit,
+    onAddExercise: () -> Unit,
+    onEditExercise: (ExercisePresentationModel) -> Unit,
     onBack: () -> Unit,
     onEvent: (ExercisesEvent) -> Unit
 ) {
@@ -118,9 +116,7 @@ private fun Content(
                     Text(text = stringResource(id = R.string.exercises))
                 },
                 actions = {
-                    IconButton(onClick = {
-                        onAddEditExercise(null)
-                    }) {
+                    IconButton(onClick = onAddExercise) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = null)
                     }
                 },
@@ -147,7 +143,7 @@ private fun Content(
                         ExerciseItem(
                             modifier = Modifier.padding(start = 16.dp),
                             exercise = exercise,
-                            onEdit = { onAddEditExercise(exercise) },
+                            onEdit = { onEditExercise(exercise) },
                             onDelete = { onEvent(ExercisesEvent.DeleteExercise(exercise)) }
                         ) {
                             onExerciseClicked(exercise)
@@ -190,7 +186,8 @@ private fun Preview() {
             exercises = state.exercises,
             snackbarHostState = SnackbarHostState(),
             onExerciseClicked = {},
-            onAddEditExercise = {},
+            onAddExercise = {},
+            onEditExercise = {},
             onBack = {},
             {}
         )

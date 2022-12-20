@@ -1,6 +1,7 @@
 package com.hyperborge.pablosfitness.presentation.workouts_screen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,13 +9,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -25,18 +24,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.common.TestData
-import com.hyperborge.pablosfitness.domain.extensions.StringExtensions.utf8Encode
 import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
-import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
-import com.hyperborge.pablosfitness.presentation.util.NavConstants
-import com.hyperborge.pablosfitness.presentation.util.NavRouteBuilder
-import com.hyperborge.pablosfitness.presentation.util.Screen
+import com.hyperborge.pablosfitness.presentation.util.navigation.routes.NavRouteBuilder
 import com.hyperborge.pablosfitness.presentation.workouts_screen.components.DateCircusComponent
 import com.hyperborge.pablosfitness.presentation.workouts_screen.components.WorkoutComponent
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 @Composable
@@ -75,24 +71,18 @@ fun WorkoutsScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onAddWorkout = {
-            val dateAsString = DateTimeHelper
-                .getStringFromOffsetDateTime(state.date)
-                .utf8Encode()
             navController.navigate(
-                route = NavRouteBuilder.buildRoute(
-                    route = Screen.ExercisesScreen.route,
-                    queryParams = listOf(NavConstants.PARAM_DATE to dateAsString)
-                )
+                route = NavRouteBuilder
+                    .exercisesScreen(state.date)
+                    .build()
             )
         },
         onWorkoutClicked = { workoutPresentationModel ->
             navController.navigate(
-                route = NavRouteBuilder.buildRoute(
-                    route = Screen.WorkoutScreen.route,
-                    queryParams = listOf(
-                        NavConstants.PARAM_WORKOUT_ID to workoutPresentationModel.id
-                    )
-                )
+                route = NavRouteBuilder
+                    .workoutScreen(state.date)
+                    .withWorkoutId(workoutPresentationModel.id)
+                    .build()
             )
         }
     ) { event ->
@@ -124,10 +114,30 @@ private fun Content(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         val hapticFeedback = LocalHapticFeedback.current
+        var dragAmountState by remember { mutableStateOf(0f) }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(
+                        onDragEnd = {
+                            if (dragAmountState < -10) {
+                                onEvent(WorkoutsEvent.NextDate)
+                            } else if (dragAmountState > 10) {
+                                onEvent(WorkoutsEvent.PreviousDate)
+                            }
+                            dragAmountState = 0f
+                        }
+                    ) { _, dragAmount ->
+                        if (
+                            dragAmountState == 0f ||
+                            dragAmount.absoluteValue > dragAmountState
+                        ) {
+                            dragAmountState = dragAmount
+                        }
+                    }
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(16.dp)

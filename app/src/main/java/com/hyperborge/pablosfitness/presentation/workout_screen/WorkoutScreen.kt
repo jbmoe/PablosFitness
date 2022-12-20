@@ -1,13 +1,20 @@
 package com.hyperborge.pablosfitness.presentation.workout_screen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,37 +25,34 @@ import androidx.navigation.NavController
 import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.common.TestData
 import com.hyperborge.pablosfitness.data.local.model.ExerciseType
-import com.hyperborge.pablosfitness.domain.extensions.StringExtensions.utf8Encode
-import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
+import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
 import com.hyperborge.pablosfitness.presentation.components.*
+import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
-import com.hyperborge.pablosfitness.presentation.util.NavConstants
-import com.hyperborge.pablosfitness.presentation.util.NavRouteBuilder
-import com.hyperborge.pablosfitness.presentation.util.Screen
+import com.hyperborge.pablosfitness.presentation.util.navigation.routes.NavRouteBuilder
+import com.hyperborge.pablosfitness.presentation.workout_screen.components.WorkoutHistoryDate
+import com.hyperborge.pablosfitness.presentation.workout_screen.components.WorkoutHistoryItem
 
 @Composable
 fun WorkoutScreen(
     navController: NavController,
     viewModel: WorkoutViewModel = hiltViewModel()
 ) {
+    val localFocusManager = LocalFocusManager.current
     LaunchedEffect(key1 = true) {
         viewModel.uiEvents.collect { event ->
             when (event) {
                 WorkoutUiEvent.WorkoutSaved -> {
-                    val dateAsString = DateTimeHelper.getStringFromOffsetDateTime(
-                        value = viewModel.state.value.date
-                    ).utf8Encode()
+                    localFocusManager.clearFocus()
                     navController.navigate(
-                        route = NavRouteBuilder.buildRoute(
-                            route = Screen.WorkoutsScreen.route,
-                            queryParams = listOf(NavConstants.PARAM_DATE to dateAsString)
-                        )
+                        route = NavRouteBuilder
+                            .workoutsScreen(viewModel.state.value.date)
+                            .build()
                     ) {
                         popUpTo(
-                            route = NavRouteBuilder.buildRoute(
-                                route = Screen.WorkoutsScreen.route,
-                                queryParams = listOf(NavConstants.PARAM_DATE to dateAsString)
-                            )
+                            route = NavRouteBuilder
+                                .workoutsScreen(viewModel.state.value.date)
+                                .build()
                         ) {
                             inclusive = true
                         }
@@ -62,62 +66,162 @@ fun WorkoutScreen(
         state = viewModel.state.value,
         onBack = {
             navController.popBackStack()
+        },
+        onEditWorkout = { workoutPresentationModel ->
+            localFocusManager.clearFocus()
+            navController.navigate(
+                route = NavRouteBuilder
+                    .workoutScreen(viewModel.state.value.date)
+                    .withWorkoutId(workoutPresentationModel.id)
+                    .build()
+            )
         }
     ) { event ->
         viewModel.onEvent(event)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(state: WorkoutState, onBack: () -> Unit, onEvent: (WorkoutEvent) -> Unit) {
+private fun Content(
+    state: WorkoutState,
+    onBack: () -> Unit,
+    onEditWorkout: (WorkoutPresentationModel) -> Unit,
+    onEvent: (WorkoutEvent) -> Unit
+) {
+    val localFocusManager = LocalFocusManager.current
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    val tabRowTitles = listOf("Track", "History")
     Scaffold(
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(onTap = { localFocusManager.clearFocus() })
+        },
         topBar = {
-            TopAppBar(
-                title = { Text(text = state.exercise.name) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+            Column {
+                TopAppBar(
+                    title = { Text(text = state.exercise.name) },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                        }
+                    }
+                )
+                TabRow(selectedTabIndex = selectedTabIndex) {
+                    tabRowTitles.forEachIndexed { i, title ->
+                        Tab(
+                            selected = selectedTabIndex == i,
+                            onClick = { selectedTabIndex = i },
+                            text = { Text(text = title) })
                     }
                 }
-            )
+            }
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .consumedWindowInsets(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
-        ) {
-            when (state.exercise.type) {
-                ExerciseType.WeightAndReps -> WeightAndRepsContent(state, onEvent)
-                ExerciseType.DistanceAndTime -> DistanceAndTimeContent(state, onEvent)
-            }
-
-            Divider(
-                modifier = Modifier.fillMaxWidth(.95f),
-                color = MaterialTheme.colorScheme.tertiary,
-                thickness = Dp.Hairline
-            )
-
-            ButtonsRow(
-                positiveText = stringResource(id = R.string.save),
-                onPositiveAction = {
-                    onEvent(WorkoutEvent.SaveWorkout)
-                },
-                negativeText = stringResource(id = R.string.clear),
-                onNegativeAction = {
-                    onEvent(WorkoutEvent.ClearValues)
+        when (selectedTabIndex) {
+            0 -> TrackWorkoutContent(padding, state, onEvent)
+            1 -> ExerciseHistoryContent(padding, state, onEditWorkout) { event ->
+                if (event is WorkoutEvent.CopyWorkout) {
+                    selectedTabIndex = 0
                 }
-            )
+                onEvent(event)
+            }
+            else -> throw NotImplementedError()
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WeightAndRepsContent(state: WorkoutState, onEvent: (WorkoutEvent) -> Unit) {
+fun ExerciseHistoryContent(
+    padding: PaddingValues,
+    state: WorkoutState,
+    onEdit: (WorkoutPresentationModel) -> Unit,
+    onEvent: (WorkoutEvent) -> Unit
+) {
+    val historyByDate = state.history.groupBy {
+        it.createdAt
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        historyByDate.forEach { (date, workouts) ->
+            if (workouts.isNotEmpty()) {
+                stickyHeader {
+                    WorkoutHistoryDate(date = date)
+                }
+                itemsIndexed(items = workouts) { index, workout ->
+                    WorkoutHistoryItem(
+                        modifier = Modifier.padding(start = 16.dp),
+                        workout = workout,
+                        onEdit = { onEdit(workout) },
+                        onCopy = {
+                            onEvent(WorkoutEvent.CopyWorkout(workout))
+                        }
+                    )
+                    if (index != workouts.lastIndex) {
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp),
+                            thickness = Dp.Hairline
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun TrackWorkoutContent(
+    padding: PaddingValues,
+    state: WorkoutState,
+    onEvent: (WorkoutEvent) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = padding.calculateTopPadding() + 16.dp,
+                start = padding.calculateStartPadding(LocalLayoutDirection.current),
+                end = padding.calculateEndPadding(LocalLayoutDirection.current),
+                bottom = padding.calculateBottomPadding()
+            )
+            .consumedWindowInsets(padding),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(32.dp)
+    ) {
+        when (state.exercise.type) {
+            ExerciseType.WeightAndReps -> WeightAndRepsContent(state, onEvent)
+            ExerciseType.DistanceAndTime -> DistanceAndTimeContent(state, onEvent)
+        }
+
+        Divider(
+            modifier = Modifier.fillMaxWidth(.95f),
+            color = MaterialTheme.colorScheme.tertiary,
+            thickness = Dp.Hairline
+        )
+
+        ButtonsRow(
+            positiveText = stringResource(id = R.string.save),
+            onPositiveAction = {
+                onEvent(WorkoutEvent.SaveWorkout)
+            },
+            negativeText = stringResource(id = R.string.clear),
+            onNegativeAction = {
+                onEvent(WorkoutEvent.ClearValues)
+            }
+        )
+    }
+}
+
+@Composable
+private fun WeightAndRepsContent(state: WorkoutState, onEvent: (WorkoutEvent) -> Unit) {
     PabloDoublePicker(
         modifier = Modifier.width(196.dp),
         inputState = state.weight,
@@ -156,7 +260,7 @@ fun WeightAndRepsContent(state: WorkoutState, onEvent: (WorkoutEvent) -> Unit) {
 
 
 @Composable
-fun DistanceAndTimeContent(state: WorkoutState, onEvent: (WorkoutEvent) -> Unit) {
+private fun DistanceAndTimeContent(state: WorkoutState, onEvent: (WorkoutEvent) -> Unit) {
     PabloDoublePicker(
         modifier = Modifier.width(196.dp),
         inputState = state.distance
@@ -202,12 +306,16 @@ fun DistanceAndTimeContent(state: WorkoutState, onEvent: (WorkoutEvent) -> Unit)
 @Composable
 private fun Preview() {
     val state = WorkoutState(
-        exercise = TestData.distanceExercises().random()
+        exercise = TestData.distanceExercises().random(),
+        history = TestData.workoutsWithExercises(ExerciseType.DistanceAndTime)
+            .plus(TestData.workoutsWithExercises(ExerciseType.WeightAndReps))
+            .mapToPresentationModel()
     )
     PablosFitnessTheme {
         Content(
             state = state,
-            onBack = {}
+            onBack = {},
+            onEditWorkout = {}
         ) {}
     }
 }

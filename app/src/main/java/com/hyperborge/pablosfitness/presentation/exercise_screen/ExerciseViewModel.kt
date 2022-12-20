@@ -10,7 +10,7 @@ import com.hyperborge.pablosfitness.data.local.model.Exercise
 import com.hyperborge.pablosfitness.data.local.model.ExerciseCategory
 import com.hyperborge.pablosfitness.data.local.model.ExerciseType
 import com.hyperborge.pablosfitness.data.repository.DbRepository
-import com.hyperborge.pablosfitness.presentation.util.NavConstants
+import com.hyperborge.pablosfitness.presentation.util.navigation.NavConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -40,9 +40,10 @@ class ExerciseViewModel @Inject constructor(
     private var _typeInput: ExerciseType? = null
 
     init {
-        savedStateHandle.get<Int>(NavConstants.PARAM_EXERCISE_ID)?.let { id ->
-            if (id != -1) {
-                initState(id)
+        savedStateHandle.get<String>(NavConstants.PARAM_EXERCISE_ID)?.let { id ->
+            val asInt = id.toInt()
+            if (asInt != -1) {
+                initState(asInt)
             }
         }
     }
