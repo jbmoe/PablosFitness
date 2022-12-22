@@ -65,7 +65,6 @@ class WorkoutViewModel @Inject constructor(
             initWorkout(workoutId)
         } else if (exerciseId != -1) {
             initLatestWorkout(exerciseId)
-            initHistory(exerciseId)
         }
     }
 
@@ -90,7 +89,9 @@ class WorkoutViewModel @Inject constructor(
             reps = _state.value.reps.setValueAndClearError(workout.reps.toString()),
             distance = _state.value.distance.setValueAndClearError(workout.distance.toString()),
             distanceUnit = _state.value.distance.setValueAndClearError(workout.distanceUnit.toString()),
-            duration = _state.value.duration.setValueAndClearError(workout.duration ?: Duration.ZERO),
+            duration = _state.value.duration.setValueAndClearError(
+                workout.duration ?: Duration.ZERO
+            ),
         )
     }
 
@@ -266,6 +267,7 @@ class WorkoutViewModel @Inject constructor(
                 )
                 _weightUnit = workout.workout.weightUnit
                 _distanceUnit = workout.workout.distanceUnit
+                initHistory(workout.exercise.id ?: 0)
             }.launchIn(viewModelScope)
         }
     }
@@ -297,6 +299,7 @@ class WorkoutViewModel @Inject constructor(
                 )
                 _weightUnit = workout.workout.weightUnit
                 _distanceUnit = workout.workout.distanceUnit
+                initHistory(workout.exercise.id ?: 0)
             } else {
                 initExercise(exerciseId)
             }
