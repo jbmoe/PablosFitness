@@ -267,7 +267,7 @@ class WorkoutViewModel @Inject constructor(
                 )
                 _weightUnit = workout.workout.weightUnit
                 _distanceUnit = workout.workout.distanceUnit
-                initHistory(workout.exercise.id ?: 0)
+                initHistory(workout.exercise)
             }.launchIn(viewModelScope)
         }
     }
@@ -299,7 +299,7 @@ class WorkoutViewModel @Inject constructor(
                 )
                 _weightUnit = workout.workout.weightUnit
                 _distanceUnit = workout.workout.distanceUnit
-                initHistory(workout.exercise.id ?: 0)
+                initHistory(workout.exercise)
             } else {
                 initExercise(exerciseId)
             }
@@ -314,11 +314,38 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    private fun initHistory(exerciseId: Int) {
+    private fun initHistory(exercise: Exercise) {
+        val exerciseId = exercise.id ?: 0
         viewModelScope.launch {
             dbRepository.getWorkoutsWithExercise(exerciseId).onEach { workouts ->
                 _state.value = _state.value.copy(history = workouts.mapToPresentationModel())
             }.launchIn(viewModelScope)
+            when (exercise.type) {
+                ExerciseType.WeightAndReps -> {
+                    dbRepository.getWorkoutWithHighestWeight(exerciseId).onEach { workout ->
+                        _state.value = _state.value.copy(
+                            maxWeightWorkout = workout?.mapToPresentationModel()
+                        )
+                    }.launchIn(viewModelScope)
+                    dbRepository.getWorkoutWithMostReps(exerciseId).onEach { workout ->
+                        _state.value = _state.value.copy(
+                            maxRepsWorkout = workout?.mapToPresentationModel()
+                        )
+                    }.launchIn(viewModelScope)
+                }
+                ExerciseType.DistanceAndTime -> {
+                    dbRepository.getWorkoutWithLongestDistance(exerciseId).onEach { workout ->
+                        _state.value = _state.value.copy(
+                            maxDistanceWorkout = workout?.mapToPresentationModel()
+                        )
+                    }.launchIn(viewModelScope)
+                    dbRepository.getWorkoutWithLongestDuration(exerciseId).onEach { workout ->
+                        _state.value = _state.value.copy(
+                            maxDurationWorkout = workout?.mapToPresentationModel()
+                        )
+                    }.launchIn(viewModelScope)
+                }
+            }
         }
     }
 

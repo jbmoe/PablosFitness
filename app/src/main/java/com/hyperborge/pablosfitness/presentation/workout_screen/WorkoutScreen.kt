@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,7 @@ import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPre
 import com.hyperborge.pablosfitness.presentation.components.*
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
+import com.hyperborge.pablosfitness.presentation.util.navigation.route_definitions.NavRouteDefinitionBuilder
 import com.hyperborge.pablosfitness.presentation.util.navigation.routes.NavRouteBuilder
 import com.hyperborge.pablosfitness.presentation.workout_screen.components.WorkoutHistoryDate
 import com.hyperborge.pablosfitness.presentation.workout_screen.components.WorkoutHistoryItem
@@ -50,8 +52,8 @@ fun WorkoutScreen(
                             .build()
                     ) {
                         popUpTo(
-                            route = NavRouteBuilder
-                                .workoutsScreen(viewModel.state.value.date)
+                            route = NavRouteDefinitionBuilder
+                                .workoutsScreen()
                                 .build()
                         ) {
                             inclusive = true
@@ -103,6 +105,35 @@ private fun Content(
                     navigationIcon = {
                         IconButton(onClick = onBack) {
                             Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                        }
+                    },
+                    actions = {
+                        var visible by remember {
+                            mutableStateOf(false)
+                        }
+                        IconButton(onClick = { visible = visible.not() }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_question_mark_24),
+                                contentDescription = null
+                            )
+                        }
+                        if (visible) {
+                            AlertDialog(
+                                onDismissRequest = { visible = false },
+                                title = { Text(text = "Records") },
+                                text = {
+                                    Column {
+                                        if (state.exercise.type == ExerciseType.WeightAndReps) {
+                                            Text(text = "Max weight: ${state.maxWeightWorkout?.weight ?: 0} ${state.maxWeightWorkout?.weightUnit}")
+                                            Text(text = "Max reps: ${state.maxRepsWorkout?.reps ?: 0} reps")
+                                        } else {
+                                            Text(text = "Max distance: ${state.maxDistanceWorkout?.distance ?: 0} ${state.maxDistanceWorkout?.distanceUnit.toString()}")
+                                            Text(text = "Max duration: ${state.maxDurationWorkout?.duration ?: 0}")
+                                        }
+                                    }
+                                },
+                                confirmButton = {}
+                            )
                         }
                     }
                 )

@@ -29,6 +29,22 @@ class DbRepositoryImpl @Inject constructor(
         return workoutDao.getWorkoutsWithExercise(exerciseId)
     }
 
+    override suspend fun getWorkoutWithHighestWeight(exerciseId: Int): Flow<WorkoutWithExercise?> {
+        return workoutDao.getWorkoutWithHighestWeight(exerciseId)
+    }
+
+    override suspend fun getWorkoutWithMostReps(exerciseId: Int): Flow<WorkoutWithExercise?> {
+        return workoutDao.getWorkoutWithMostReps(exerciseId)
+    }
+
+    override suspend fun getWorkoutWithLongestDistance(exerciseId: Int): Flow<WorkoutWithExercise?> {
+        return workoutDao.getWorkoutWithLongestDistance(exerciseId)
+    }
+
+    override suspend fun getWorkoutWithLongestDuration(exerciseId: Int): Flow<WorkoutWithExercise?> {
+        return workoutDao.getWorkoutWithLongestDuration(exerciseId)
+    }
+
     override suspend fun getWorkout(id: Int): Flow<WorkoutWithExercise> {
         return workoutDao.getWorkout(id).filterNotNull()
     }

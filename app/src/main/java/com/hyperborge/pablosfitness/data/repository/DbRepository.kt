@@ -21,6 +21,10 @@ interface WorkoutRepository {
 
     suspend fun getNewestWorkoutWithExercise(exerciseId: Int): WorkoutWithExercise?
     suspend fun getWorkoutsWithExercise(exerciseId: Int): Flow<List<WorkoutWithExercise>>
+    suspend fun getWorkoutWithHighestWeight(exerciseId: Int): Flow<WorkoutWithExercise?>
+    suspend fun getWorkoutWithMostReps(exerciseId: Int): Flow<WorkoutWithExercise?>
+    suspend fun getWorkoutWithLongestDistance(exerciseId: Int): Flow<WorkoutWithExercise?>
+    suspend fun getWorkoutWithLongestDuration(exerciseId: Int): Flow<WorkoutWithExercise?>
     fun insertWorkout(workout: WorkoutWithExercise)
     fun insertWorkouts(workouts: List<WorkoutWithExercise>)
     suspend fun deleteWorkoutById(id: Int): WorkoutWithExercise
