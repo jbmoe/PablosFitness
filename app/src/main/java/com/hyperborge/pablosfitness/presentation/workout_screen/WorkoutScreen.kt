@@ -223,7 +223,7 @@ private fun TrackWorkoutContent(
                 end = padding.calculateEndPadding(LocalLayoutDirection.current),
                 bottom = padding.calculateBottomPadding()
             )
-            .consumedWindowInsets(padding),
+            .consumeWindowInsets(padding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {

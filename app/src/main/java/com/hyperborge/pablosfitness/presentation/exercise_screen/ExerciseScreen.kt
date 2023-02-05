@@ -72,7 +72,7 @@ fun Content(state: ExerciseState, onBack: () -> Unit, onEvent: (ExerciseEvent) -
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .consumedWindowInsets(padding),
+                .consumeWindowInsets(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
