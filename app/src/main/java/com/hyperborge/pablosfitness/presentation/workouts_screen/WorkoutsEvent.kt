@@ -1,6 +1,7 @@
 package com.hyperborge.pablosfitness.presentation.workouts_screen
 
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
+import java.time.OffsetDateTime
 
 sealed interface WorkoutsEvent {
     object NextDate : WorkoutsEvent
@@ -12,6 +13,7 @@ sealed interface WorkoutsEvent {
     object DeleteMarkedWorkouts : WorkoutsEvent
 
     data class ToggleWorkoutMarked(val workout: WorkoutPresentationModel) : WorkoutsEvent
+    data class GoToDate(val value: OffsetDateTime) : WorkoutsEvent
 }
 
 sealed interface WorkoutsUiEvent {

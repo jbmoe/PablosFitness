@@ -1,12 +1,15 @@
 package com.hyperborge.pablosfitness.presentation.workouts_screen
 
 import android.content.res.Configuration
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,25 +28,53 @@ import androidx.navigation.NavController
 import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.common.TestData
 import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
+import com.hyperborge.pablosfitness.presentation.components.PabloDatePicker
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
 import com.hyperborge.pablosfitness.presentation.util.navigation.routes.NavRouteBuilder
 import com.hyperborge.pablosfitness.presentation.workouts_screen.components.DateCircusComponent
 import com.hyperborge.pablosfitness.presentation.workouts_screen.components.WorkoutComponent
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.random.Random
+
+sealed class BackPress {
+    object Idle : BackPress()
+    object InitialTouch : BackPress()
+}
 
 @Composable
 fun WorkoutsScreen(
     navController: NavController,
     viewModel: WorkoutsViewModel = hiltViewModel()
 ) {
+    var showToast by remember { mutableStateOf(false) }
+
+    var backPressState by remember { mutableStateOf<BackPress>(BackPress.Idle) }
+    val context = LocalContext.current
+
+    if (showToast) {
+        Toast.makeText(context, "Press again to exit", Toast.LENGTH_SHORT).show()
+        showToast = false
+    }
+
+    LaunchedEffect(key1 = backPressState) {
+        if (backPressState == BackPress.InitialTouch) {
+            delay(2000)
+            backPressState = BackPress.Idle
+        }
+    }
+
+    BackHandler(backPressState == BackPress.Idle) {
+        backPressState = BackPress.InitialTouch
+        showToast = true
+    }
+
     val state = viewModel.state.value
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvents.collect { event ->
@@ -215,9 +246,27 @@ fun TopBarComponent(
     onEvent: (WorkoutsEvent) -> Unit
 ) {
     Column {
-        CenterAlignedTopAppBar(
+        MediumTopAppBar(
             title = {
                 Text(text = stringResource(id = R.string.workouts))
+            },
+            navigationIcon = {
+                val openDialog = remember { mutableStateOf(false) }
+
+                IconButton(onClick = { openDialog.value = true }) {
+                    Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
+                }
+
+                PabloDatePicker(
+                    isOpen = openDialog.value,
+                    onDismiss = {
+                        openDialog.value = false
+                    },
+                    dateSelected = {
+                        openDialog.value = false
+                        onEvent(WorkoutsEvent.GoToDate(it))
+                    }
+                )
             },
             actions = {
                 IconButton(onClick = {
@@ -236,7 +285,7 @@ fun TopBarComponent(
         )
         Divider(
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }

@@ -57,6 +57,7 @@ class WorkoutsViewModel @Inject constructor(
             is WorkoutsEvent.DeleteMarkedWorkouts -> deleteMarkedWorkouts()
             is WorkoutsEvent.MarkAllWorkouts -> markAllWorkouts()
             is WorkoutsEvent.ToggleWorkoutMarked -> toggleWorkoutMarked(event.workout)
+            is WorkoutsEvent.GoToDate -> getWorkoutsForDate(event.value)
         }
     }
 
@@ -118,7 +119,8 @@ class WorkoutsViewModel @Inject constructor(
                 to = date.atEndOfDate()
             ).onEach { workouts ->
                 _state.value = _state.value.copy(
-                    workouts = workouts.mapToPresentationModel()
+                    workouts = workouts.mapToPresentationModel(),
+                    date = date
                 )
             }.launchIn(viewModelScope)
         }
