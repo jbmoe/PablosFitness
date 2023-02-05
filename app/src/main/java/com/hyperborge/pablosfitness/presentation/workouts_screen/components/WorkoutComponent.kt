@@ -9,7 +9,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.hyperborge.pablosfitness.common.TestData
 import com.hyperborge.pablosfitness.data.local.model.ExerciseType
 import com.hyperborge.pablosfitness.domain.extensions.WorkoutExtensions.mapToPresentationModel
@@ -25,12 +27,21 @@ fun WorkoutComponent(
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
-    CardComponent(
+    val colors = if (exercise.isMarked) {
+        CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
+    } else {
+        CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSecondary
+        )
+    }
+    Card(
         modifier = modifier.combinedClickable(
             onClick = onClick,
             onLongClick = onLongClick
         ),
-        isMarked = exercise.isMarked
+        colors = colors
     ) {
         ListItem(
             headlineText = {
@@ -44,34 +55,11 @@ fun WorkoutComponent(
             },
             supportingText = {
                 ExerciseDetails(
-                    modifier = Modifier.fillMaxWidth(),
-                    exercise = exercise
+                    modifier = Modifier.fillMaxWidth(), exercise = exercise
                 )
-            }
+            },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
         )
-    }
-}
-
-@Composable
-private fun CardComponent(
-    modifier: Modifier = Modifier,
-    isMarked: Boolean,
-    content: @Composable (ColumnScope.() -> Unit)
-) {
-    if (!isMarked) {
-        ElevatedCard(
-            modifier = modifier,
-            shape = CardDefaults.elevatedShape,
-            colors = CardDefaults.elevatedCardColors(),
-            elevation = CardDefaults.elevatedCardElevation()
-        ) { content() }
-    } else {
-        OutlinedCard(
-            modifier = modifier,
-            shape = CardDefaults.outlinedShape,
-            colors = CardDefaults.outlinedCardColors(),
-            elevation = CardDefaults.outlinedCardElevation()
-        ) { content() }
     }
 }
 
@@ -82,18 +70,10 @@ private fun ExerciseDetails(modifier: Modifier = Modifier, exercise: WorkoutPres
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        if (
-            exercise.distance != null &&
-            exercise.distanceUnit != null &&
-            exercise.duration != null
-        ) {
+        if (exercise.distance != null && exercise.distanceUnit != null && exercise.duration != null) {
             Text(text = "${exercise.distance} ${exercise.distanceUnit}")
             Text(text = exercise.duration.toString())
-        } else if (
-            exercise.weight != null &&
-            exercise.weightUnit != null &&
-            exercise.reps != null
-        ) {
+        } else if (exercise.weight != null && exercise.weightUnit != null && exercise.reps != null) {
             Text(text = "${exercise.weight} ${exercise.weightUnit}")
             Text(text = "${exercise.reps} reps")
         }
@@ -107,15 +87,22 @@ private fun ExerciseDetails(modifier: Modifier = Modifier, exercise: WorkoutPres
 private fun Preview() {
     val exercise1 = TestData
         .workoutsWithExercises()
-        .mapToPresentationModel()
         .random()
+        .mapToPresentationModel()
+        .copy(isMarked = true)
     val exercise2 = TestData
         .workoutsWithExercises(ExerciseType.DistanceAndTime)
         .random()
         .mapToPresentationModel()
+        .copy(isMarked = false)
 
     PablosFitnessTheme {
-        Column(Modifier.background(MaterialTheme.colorScheme.background)) {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             WorkoutComponent(modifier = Modifier.fillMaxWidth(), exercise1, {}) {}
             WorkoutComponent(modifier = Modifier.fillMaxWidth(), exercise2, {}) {}
         }

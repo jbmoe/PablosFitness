@@ -95,7 +95,6 @@ fun ExercisesScreen(
     ) { event ->
         viewModel.onEvent(event)
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
