@@ -3,6 +3,7 @@ package com.hyperborge.pablosfitness.presentation.workout_screen
 import com.hyperborge.pablosfitness.data.local.model.DistanceUnit
 import com.hyperborge.pablosfitness.data.local.model.Exercise
 import com.hyperborge.pablosfitness.data.local.model.WeightUnit
+import com.hyperborge.pablosfitness.data.local.model.WorkoutStats
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.util.InputFieldState
 import java.time.OffsetDateTime
@@ -28,8 +29,5 @@ data class WorkoutState(
     val weightUnits: List<WeightUnit> = WeightUnit.values().toList(),
     val distanceUnits: List<DistanceUnit> = DistanceUnit.values().toList(),
     val history: List<WorkoutPresentationModel> = emptyList(),
-    val maxWeightWorkout: WorkoutPresentationModel? = null,
-    val maxRepsWorkout: WorkoutPresentationModel? = null,
-    val maxDistanceWorkout: WorkoutPresentationModel? = null,
-    val maxDurationWorkout: WorkoutPresentationModel? = null
+    val workoutStats: WorkoutStats? = null
 )

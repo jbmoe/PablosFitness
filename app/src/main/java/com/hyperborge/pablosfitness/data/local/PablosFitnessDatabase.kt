@@ -11,7 +11,7 @@ import com.hyperborge.pablosfitness.data.local.model.Workout
 
 @Database(
     entities = [Workout::class, Exercise::class],
-    version = 5
+    version = 6
 )
 @TypeConverters(OffsetDateTimeConverter::class)
 abstract class PablosFitnessDatabase : RoomDatabase() {

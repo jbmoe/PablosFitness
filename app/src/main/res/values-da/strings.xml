@@ -10,11 +10,13 @@
     <string name="cancel">Annuller</string>
     <string name="clear">Ryd</string>
     <string name="empty_workout_log">Intet træningspas</string>
-    <string name="start_new_workout">Start et nyt træningspas</string>
+    <string name="start_new_workout">Start en ny træning</string>
     <string name="restore">Genopret</string>
     <string name="update_exercise">Opdater øvelse</string>
     <string name="new_exercise">Ny øvelse</string>
     <string name="n_deleted">%1d slettet</string>
     <string name="n_marked">Der er valgt %1d</string>
     <string name="x_deleted">%1s slettet</string>
+    <string name="no_exercise_history">Ingen Data</string>
+    <string name="no_exercise_stats">Ingen Statistikker</string>
 </resources>
