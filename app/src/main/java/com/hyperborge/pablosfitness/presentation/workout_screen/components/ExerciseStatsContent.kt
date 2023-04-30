@@ -1,14 +1,11 @@
 package com.hyperborge.pablosfitness.presentation.workout_screen.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +13,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hyperborge.pablosfitness.R
 import com.hyperborge.pablosfitness.data.local.model.ExerciseType
-import com.hyperborge.pablosfitness.presentation.workout_screen.WorkoutEvent
 import com.hyperborge.pablosfitness.presentation.workout_screen.WorkoutState
 import java.time.format.DateTimeFormatter
 import kotlin.time.DurationUnit
@@ -91,11 +87,8 @@ fun ExerciseStatsContent(
                                 DateTimeFormatter.ofPattern(
                                     "eee dd MMM"
                                 )
-                            ),
-                            tooltipText = "Go to workout"
-                        ) {
-                            onGoToWorkout(it.workout.workout.id!!)
-                        }
+                            )
+                        )
                     }
                 }
                 stats.maxReps?.let {
@@ -107,11 +100,8 @@ fun ExerciseStatsContent(
                                 DateTimeFormatter.ofPattern(
                                     "eee dd MMM"
                                 )
-                            ),
-                            tooltipText = "Go to workout"
-                        ) {
-                            onGoToWorkout(it.workout.workout.id!!)
-                        }
+                            )
+                        )
                     }
                 }
                 stats.maxVolume?.let {
@@ -123,11 +113,8 @@ fun ExerciseStatsContent(
                                 DateTimeFormatter.ofPattern(
                                     "eee dd MMM"
                                 )
-                            ),
-                            tooltipText = "Go to workout"
-                        ) {
-                            onGoToWorkout(it.workout.workout.id!!)
-                        }
+                            )
+                        )
                     }
                 }
             }
@@ -157,11 +144,8 @@ fun ExerciseStatsContent(
                                 DateTimeFormatter.ofPattern(
                                     "eee dd MMM"
                                 )
-                            ),
-                            tooltipText = "Go to workout"
-                        ) {
-                            onGoToWorkout(it.workout.workout.id!!)
-                        }
+                            )
+                        )
                     }
                 }
                 stats.maxTime?.let {
@@ -173,11 +157,8 @@ fun ExerciseStatsContent(
                                 DateTimeFormatter.ofPattern(
                                     "eee dd MMM"
                                 )
-                            ),
-                            tooltipText = "Go to workout"
-                        ) {
-                            onGoToWorkout(it.workout.workout.id!!)
-                        }
+                            )
+                        )
                     }
                 }
                 stats.maxSpeed?.let {
@@ -190,11 +171,8 @@ fun ExerciseStatsContent(
                                 DateTimeFormatter.ofPattern(
                                     "eee dd MMM"
                                 )
-                            ),
-                            tooltipText = "Go to workout"
-                        ) {
-                            onGoToWorkout(it.workout.workout.id!!)
-                        }
+                            )
+                        )
                     }
                 }
                 stats.workoutSpeed?.let {
@@ -222,11 +200,8 @@ fun ExerciseStatsContent(
                                 DateTimeFormatter.ofPattern(
                                     "eee dd MMM"
                                 )
-                            ),
-                            tooltipText = "Go to workout"
-                        ) {
-                            onGoToWorkout(it.workout.workout.id!!)
-                        }
+                            )
+                        )
                     }
                 }
                 stats.workoutPace?.let {

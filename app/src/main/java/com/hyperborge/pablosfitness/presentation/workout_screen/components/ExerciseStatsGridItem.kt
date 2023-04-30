@@ -1,70 +1,39 @@
 package com.hyperborge.pablosfitness.presentation.workout_screen.components
 
 import android.content.res.Configuration
-import android.graphics.Paint.Align
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hyperborge.pablosfitness.domain.extensions.OffsetDateTimeExtensions
-import com.hyperborge.pablosfitness.domain.helpers.DateTimeHelper
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseStatsGridItem(
     modifier: Modifier = Modifier,
     value: String,
     overLineText: String,
-    underLineText: String? = null,
-    tooltipText: String? = null,
-    onTooltipClicked: (() -> Unit)? = null
+    underLineText: String? = null
 ) {
-    val tooltipState = remember { TooltipState() }
-    val scope = rememberCoroutineScope()
-    PlainTooltipBox(
-        tooltip = {
-            tooltipText?.let {
-                TextButton(onClick = { onTooltipClicked?.invoke() }) {
-                    Text(text = it)
-                }
-            }
-        },
-        tooltipState = tooltipState,
-        shape = CardDefaults.shape,
-        contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.secondaryContainer),
-        containerColor = MaterialTheme.colorScheme.secondaryContainer
-    ) {
-        Card(Modifier.clickable(false) {
-            scope.launch { tooltipState.show() }
-        }) {
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-                    .height(112.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = overLineText, style = MaterialTheme.typography.labelMedium)
-                Text(text = value, style = MaterialTheme.typography.labelLarge)
-                underLineText?.let {
-                    Text(text = underLineText, style = MaterialTheme.typography.labelMedium)
-                }
+    Card {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+                .height(112.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = overLineText, style = MaterialTheme.typography.labelMedium)
+            Text(text = value, style = MaterialTheme.typography.labelLarge)
+            underLineText?.let {
+                Text(text = underLineText, style = MaterialTheme.typography.labelMedium)
             }
         }
     }
