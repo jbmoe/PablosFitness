@@ -1,7 +1,6 @@
 package com.hyperborge.pablosfitness.data.repository
 
-import com.hyperborge.pablosfitness.data.local.model.Exercise
-import com.hyperborge.pablosfitness.data.local.model.WorkoutWithExercise
+import com.hyperborge.pablosfitness.data.local.model.*
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
@@ -21,14 +20,19 @@ interface WorkoutRepository {
 
     suspend fun getNewestWorkoutWithExercise(exerciseId: Int): WorkoutWithExercise?
     suspend fun getWorkoutsWithExercise(exerciseId: Int): Flow<List<WorkoutWithExercise>>
-    suspend fun getWorkoutWithHighestWeight(exerciseId: Int): Flow<WorkoutWithExercise?>
-    suspend fun getWorkoutWithMostReps(exerciseId: Int): Flow<WorkoutWithExercise?>
-    suspend fun getWorkoutWithLongestDistance(exerciseId: Int): Flow<WorkoutWithExercise?>
-    suspend fun getWorkoutWithLongestDuration(exerciseId: Int): Flow<WorkoutWithExercise?>
     fun insertWorkout(workout: WorkoutWithExercise)
     fun insertWorkouts(workouts: List<WorkoutWithExercise>)
     suspend fun deleteWorkoutById(id: Int): WorkoutWithExercise
     suspend fun deleteWorkoutsByIds(ids: List<Int>): List<WorkoutWithExercise>
 }
 
-interface DbRepository : ExerciseRepository, WorkoutRepository
+interface DbRepository : ExerciseRepository, WorkoutRepository {
+    suspend fun getWorkoutStats(
+        exerciseId: Int,
+        workoutId: Int? = null,
+        weightUnit: WeightUnit,
+        distanceUnit: DistanceUnit,
+        from: OffsetDateTime,
+        to: OffsetDateTime
+    ): Flow<WorkoutStats?>
+}

@@ -31,22 +31,6 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId ORDER BY datetime(created_at) DESC")
     fun getWorkoutsWithExercise(exerciseId: Int): Flow<List<WorkoutWithExercise>>
 
-    @Transaction
-    @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId  ORDER BY weight DESC")
-    fun getWorkoutWithHighestWeight(exerciseId: Int): Flow<WorkoutWithExercise?>
-
-    @Transaction
-    @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId  ORDER BY reps DESC")
-    fun getWorkoutWithMostReps(exerciseId: Int): Flow<WorkoutWithExercise?>
-
-    @Transaction
-    @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId  ORDER BY distance DESC")
-    fun getWorkoutWithLongestDistance(exerciseId: Int): Flow<WorkoutWithExercise?>
-
-    @Transaction
-    @Query("SELECT * FROM workout WHERE exercise_id = :exerciseId ORDER BY time_in_seconds DESC")
-    fun getWorkoutWithLongestDuration(exerciseId: Int): Flow<WorkoutWithExercise?>
-
     @Query("DELETE FROM workout WHERE exercise_id = :exerciseId")
     fun deleteWorkoutsWithExercise(exerciseId: Int)
 

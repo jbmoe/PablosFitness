@@ -4,7 +4,7 @@ enum class WeightUnit {
     KG, LB;
 
     override fun toString(): String = when (this) {
-        KG -> "kgs"
-        LB -> "lbs"
+        KG -> "kg"
+        LB -> "lb"
     }
 }

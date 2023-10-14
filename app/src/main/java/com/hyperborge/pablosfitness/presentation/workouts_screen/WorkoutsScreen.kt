@@ -32,13 +32,13 @@ import com.hyperborge.pablosfitness.presentation.components.PabloDatePicker
 import com.hyperborge.pablosfitness.presentation.presentation_models.WorkoutPresentationModel
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
 import com.hyperborge.pablosfitness.presentation.util.navigation.routes.NavRouteBuilder
+import com.hyperborge.pablosfitness.presentation.workout_screen.components.EmptyContent
 import com.hyperborge.pablosfitness.presentation.workouts_screen.components.DateCircusComponent
 import com.hyperborge.pablosfitness.presentation.workouts_screen.components.WorkoutComponent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import kotlin.math.absoluteValue
-import kotlin.random.Random
 
 sealed class BackPress {
     object Idle : BackPress()
@@ -192,7 +192,12 @@ private fun Content(
                 }
             } else {
                 item {
-                    EmptyLogContent(onAddWorkout = onAddWorkout)
+                    EmptyContent(
+                        topText = stringResource(id = R.string.empty_workout_log),
+                        bottomText = stringResource(id = R.string.start_new_workout),
+                        padding = paddingValues,
+                        onButtonClick = onAddWorkout
+                    )
                 }
             }
         }
@@ -290,43 +295,12 @@ fun TopBarComponent(
     }
 }
 
-@Composable
-fun EmptyLogContent(onAddWorkout: () -> Unit) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.height(256.dp))
-            Text(
-                text = stringResource(R.string.empty_workout_log),
-                style = MaterialTheme.typography.titleLarge
-            )
-            Spacer(Modifier.height(64.dp))
-            IconButton(onClick = onAddWorkout) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    imageVector = Icons.Default.Add,
-                    tint = MaterialTheme.colorScheme.tertiary,
-                    contentDescription = null
-                )
-            }
-            Text(text = stringResource(R.string.start_new_workout))
-        }
-    }
-}
-
 @ExperimentalMaterial3Api
 @Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Preview(name = "Light mode", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
 @Composable
 private fun Preview() {
-    val data = TestData.workoutsWithExercises().mapToPresentationModel().map {
-        it.copy(isMarked = Random.nextBoolean())
-    }
+    val data = TestData.workoutsWithExercises().mapToPresentationModel()
     val state = WorkoutsState(
         date = OffsetDateTime.now(),
         workouts = data,

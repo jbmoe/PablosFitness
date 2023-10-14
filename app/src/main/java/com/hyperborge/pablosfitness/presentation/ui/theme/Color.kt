@@ -107,7 +107,7 @@ private fun Preview() {
         ) {
             items(colors) { (colorss, name) ->
                 ListItem(
-                    headlineText = { Text(text = name) },
+                    headlineContent = { Text(text = name) },
                     colors = ListItemDefaults.colors(
                         containerColor = colorss.first,
                         headlineColor = colorss.second ?: contentColorFor(

@@ -38,27 +38,30 @@ fun DateCircusComponent(
             Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = null)
         }
 
-        val text = if (date.toLocalDate() == LocalDate.now()) {
-            stringResource(id = R.string.today)
-        } else if (date.toLocalDate() == LocalDate.now().minusDays(1)) {
-            stringResource(id = R.string.yesterday)
-        } else if (date.toLocalDate() == LocalDate.now().plusDays(1)) {
-            stringResource(id = R.string.tomorrow)
-        } else {
-            date.format(DateTimeFormatter.ofPattern("eee dd MMM"))
-        }
-
         Text(
             modifier = Modifier
                 .weight(1f)
                 .clickable { onResetToToday() },
-            text = text,
+            text = getDateText(date = date),
             textAlign = TextAlign.Center
         )
 
         IconButton(modifier = Modifier.weight(1f), onClick = onNextDayClicked) {
             Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
         }
+    }
+}
+
+@Composable
+private fun getDateText(date: OffsetDateTime): String {
+    return if (date.toLocalDate() == LocalDate.now()) {
+        stringResource(id = R.string.today)
+    } else if (date.toLocalDate() == LocalDate.now().minusDays(1)) {
+        stringResource(id = R.string.yesterday)
+    } else if (date.toLocalDate() == LocalDate.now().plusDays(1)) {
+        stringResource(id = R.string.tomorrow)
+    } else {
+        date.format(DateTimeFormatter.ofPattern("eee dd MMM"))
     }
 }
 

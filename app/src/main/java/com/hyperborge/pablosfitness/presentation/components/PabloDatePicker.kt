@@ -52,7 +52,7 @@ fun PabloDatePicker(
                 }
             }
         ) {
-            DatePicker(datePickerState = datePickerState)
+            DatePicker(state = datePickerState)
         }
     }
 }

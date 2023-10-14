@@ -23,7 +23,7 @@ fun ExerciseItem(
         modifier = modifier.clickable {
             onClick()
         },
-        headlineText = {
+        headlineContent = {
             Text(
                 text = exercise.name,
                 style = MaterialTheme.typography.bodyMedium

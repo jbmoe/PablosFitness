@@ -32,13 +32,13 @@ fun WorkoutHistoryItem(
                     moreExpanded = moreExpanded.not()
                 }
             },
-        headlineText = {
+        headlineContent = {
             Text(
                 text = workout.exerciseName,
                 style = MaterialTheme.typography.bodyMedium
             )
         },
-        supportingText = {
+        supportingContent = {
             ExerciseDetails(
                 modifier = Modifier.fillMaxWidth(),
                 workout = workout

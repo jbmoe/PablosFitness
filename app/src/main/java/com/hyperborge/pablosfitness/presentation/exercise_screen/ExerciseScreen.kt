@@ -68,63 +68,67 @@ fun Content(state: ExerciseState, onBack: () -> Unit, onEvent: (ExerciseEvent) -
             )
         },
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .consumeWindowInsets(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
-        ) {
-            BetterTextField(
-                inputState = state.name,
-                onValueChange = {
-                    onEvent(ExerciseEvent.NameEntered(it))
+        Box(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+            Column(
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .align(Alignment.TopCenter)
+                    .padding(padding)
+                    .consumeWindowInsets(padding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(32.dp)
+            ) {
+                BetterTextField(
+                    inputState = state.name,
+                    onValueChange = {
+                        onEvent(ExerciseEvent.NameEntered(it))
+                    }
+                )
+
+                var categoriesExpanded by remember { mutableStateOf(false) }
+                PabloDropDown(
+                    selectedItem = state.category,
+                    items = state.categories,
+                    expanded = categoriesExpanded,
+                    onExpandedChange = { categoriesExpanded = it }
+                ) { item ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = item.toString())
+                        },
+                        onClick = {
+                            categoriesExpanded = false
+                            onEvent(ExerciseEvent.CategoryPicked(item))
+                        }
+                    )
                 }
-            )
 
-            var categoriesExpanded by remember { mutableStateOf(false) }
-            PabloDropDown(
-                selectedItem = state.category,
-                items = state.categories,
-                expanded = categoriesExpanded,
-                onExpandedChange = { categoriesExpanded = it }
-            ) { item ->
-                DropdownMenuItem(
-                    text = {
-                        Text(text = item.toString())
-                    },
-                    onClick = {
-                        categoriesExpanded = false
-                        onEvent(ExerciseEvent.CategoryPicked(item))
-                    }
+                var typesExpanded by remember { mutableStateOf(false) }
+                PabloDropDown(
+                    selectedItem = state.type,
+                    items = state.types,
+                    expanded = typesExpanded,
+                    onExpandedChange = { typesExpanded = it }
+                ) { item ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = item.toString())
+                        },
+                        onClick = {
+                            typesExpanded = false
+                            onEvent(ExerciseEvent.TypePicked(item))
+                        }
+                    )
+                }
+
+                ButtonsRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    positiveText = stringResource(id = R.string.save),
+                    onPositiveAction = { onEvent(ExerciseEvent.SaveExercise) },
+                    negativeText = stringResource(id = R.string.cancel),
+                    onNegativeAction = onBack
                 )
             }
-
-            var typesExpanded by remember { mutableStateOf(false) }
-            PabloDropDown(
-                selectedItem = state.type,
-                items = state.types,
-                expanded = typesExpanded,
-                onExpandedChange = { typesExpanded = it }
-            ) { item ->
-                DropdownMenuItem(
-                    text = {
-                        Text(text = item.toString())
-                    },
-                    onClick = {
-                        typesExpanded = false
-                        onEvent(ExerciseEvent.TypePicked(item))
-                    }
-                )
-            }
-
-            ButtonsRow(
-                positiveText = stringResource(id = R.string.save),
-                onPositiveAction = { onEvent(ExerciseEvent.SaveExercise) },
-                negativeText = stringResource(id = R.string.cancel),
-                onNegativeAction = onBack
-            )
         }
     }
 }
