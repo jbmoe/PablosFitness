@@ -135,10 +135,10 @@ private fun Content(
         ) {
             exercises.forEach { (category, exercises) ->
                 if (exercises.isNotEmpty()) {
-                    stickyHeader {
+                    stickyHeader(key = category.name) {
                         ExerciseCategoryItem(exerciseCategory = category)
                     }
-                    itemsIndexed(items = exercises) { index, exercise ->
+                    itemsIndexed(items = exercises, key = {_, exercise -> exercise.id}) { index, exercise ->
                         ExerciseItem(
                             modifier = Modifier.padding(start = 16.dp),
                             exercise = exercise,
