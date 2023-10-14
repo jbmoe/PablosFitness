@@ -204,7 +204,7 @@ class WorkoutViewModel @Inject constructor(
                     return
                 }
 
-                if (distance > 0 && duration > Duration.ZERO) {
+                if (distance >= 0 && duration >= Duration.ZERO) {
                     val workout = WorkoutWithExercise(
                         exercise = _state.value.exercise,
                         workout = Workout(
@@ -230,7 +230,7 @@ class WorkoutViewModel @Inject constructor(
                     )
                 }
 
-                if (duration <= Duration.ZERO) {
+                if (duration < Duration.ZERO) {
                     _state.value = _state.value.copy(
                         duration = _state.value.duration.setError("Invalid time")
                     )

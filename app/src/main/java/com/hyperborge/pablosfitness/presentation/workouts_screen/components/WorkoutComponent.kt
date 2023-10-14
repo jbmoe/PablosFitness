@@ -27,21 +27,12 @@ fun WorkoutComponent(
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
-    val colors = if (exercise.isMarked) {
-        CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer
-        )
-    } else {
-        CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSecondary
-        )
-    }
     Card(
         modifier = modifier.combinedClickable(
             onClick = onClick,
             onLongClick = onLongClick
         ),
-        colors = colors
+        isMarked = exercise.isMarked
     ) {
         ListItem(
             headlineText = {
@@ -77,6 +68,25 @@ private fun ExerciseDetails(modifier: Modifier = Modifier, exercise: WorkoutPres
             Text(text = "${exercise.weight} ${exercise.weightUnit}")
             Text(text = "${exercise.reps} reps")
         }
+    }
+}
+
+@Composable
+private fun Card(
+    modifier: Modifier,
+    isMarked: Boolean,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    if (isMarked) {
+        OutlinedCard(
+            modifier = modifier,
+            content = content
+        )
+    } else {
+        Card(
+            modifier = modifier,
+            content = content
+        )
     }
 }
 
