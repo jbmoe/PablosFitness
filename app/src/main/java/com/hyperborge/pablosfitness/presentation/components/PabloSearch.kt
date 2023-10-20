@@ -1,13 +1,11 @@
 package com.hyperborge.pablosfitness.presentation.components
 
 import android.content.res.Configuration
-import coil.compose.AsyncImage
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,10 +27,10 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.hyperborge.pablosfitness.presentation.ui.theme.PablosFitnessTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,9 +75,9 @@ fun PabloSearch() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedBorderColor = MaterialTheme.colorScheme.surface,
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.surface,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.surface,
                     ),
                     shape = RoundedCornerShape(100),
                     placeholder = { Text("Search...") },

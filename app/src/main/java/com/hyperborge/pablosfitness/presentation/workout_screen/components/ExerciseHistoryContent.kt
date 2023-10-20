@@ -4,8 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -64,7 +62,7 @@ fun ExerciseHistoryContent(
                         }
                     )
                     if (index != workouts.lastIndex) {
-                        Divider(
+                        HorizontalDivider(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 4.dp),

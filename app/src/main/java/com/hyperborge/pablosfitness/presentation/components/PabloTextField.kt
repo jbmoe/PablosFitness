@@ -34,9 +34,10 @@ fun BetterTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences),
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+    ),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = TextFieldDefaults.outlinedShape,
+    shape: Shape = OutlinedTextFieldDefaults.shape,
     onValueChange: (String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -87,9 +88,10 @@ fun <T> BetterTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences),
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+    ),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = TextFieldDefaults.outlinedShape,
+    shape: Shape = OutlinedTextFieldDefaults.shape,
     onValueChange: (String) -> Unit
 ) {
     BetterTextField(

@@ -288,7 +288,7 @@ fun TopBarComponent(
             onPrevDateClicked = { onEvent(WorkoutsEvent.PreviousDate) },
             onNextDayClicked = { onEvent(WorkoutsEvent.NextDate) }
         )
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.primary
         )

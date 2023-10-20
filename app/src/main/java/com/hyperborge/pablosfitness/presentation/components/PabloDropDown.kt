@@ -23,9 +23,10 @@ fun <T> PabloDropDown(
     singleLine: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     leadingIcon: @Composable (() -> Unit)? = null,
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+    ),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = TextFieldDefaults.outlinedShape,
+    shape: Shape = OutlinedTextFieldDefaults.shape,
     menuItemBuilder: @Composable ((T) -> Unit)
 ) {
     ExposedDropdownMenuBox(

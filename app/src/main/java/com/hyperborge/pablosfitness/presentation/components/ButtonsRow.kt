@@ -23,14 +23,14 @@ fun ButtonsRow(
     ) {
         FilledTonalButton(
             onClick = onPositiveAction,
-            shape = TextFieldDefaults.outlinedShape
+            shape = OutlinedTextFieldDefaults.shape
         ) {
             Text(text = positiveText)
         }
 
         OutlinedButton(
             onClick = onNegativeAction,
-            shape = TextFieldDefaults.outlinedShape
+            shape = OutlinedTextFieldDefaults.shape
         ) {
             Text(text = negativeText)
         }
